@@ -58,10 +58,24 @@ enum APIConfig {
     }
 }
 
-enum MealAnalyzeError: Error {
+enum MealAnalyzeError: LocalizedError {
     case noURL
     case badStatus(Int)
     case decode
+
+    var errorDescription: String? {
+        switch self {
+        case .noURL:
+            return "Missing Supabase URL. Check AppSecrets.plist."
+        case .badStatus(let code):
+            if code == 401 {
+                return "Meal analysis was unauthorized (401). Redeploy the analyze-meal function with verify_jwt disabled for publishable keys, or check your publishable key in AppSecrets."
+            }
+            return "Could not analyze meal (HTTP \(code))."
+        case .decode:
+            return "Could not read the analysis response."
+        }
+    }
 }
 
 @MainActor
@@ -95,7 +109,7 @@ final class APIClient {
         if let t = accessToken {
             req.setValue("Bearer \(t)", forHTTPHeaderField: "Authorization")
         } else if let key = APIConfig.supabaseAnonKey {
-            // Edge `verify_jwt` accepts the project anon JWT when no user session exists yet.
+            // Publishable key must match `apikey`; Bearer duplicates it for gateways that expect Authorization (not a JWT).
             req.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization")
         }
         let b64 = imageJPEG.base64EncodedString()

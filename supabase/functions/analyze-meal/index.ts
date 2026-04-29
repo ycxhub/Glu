@@ -32,6 +32,27 @@ type MealAIOutput = {
   confidence: number;
 };
 
+/** Hosted Edge injects `SUPABASE_ANON_KEY` (publishable or legacy anon shape). Reject requests without a matching client key. */
+function unauthorizedUnlessProjectKey(req: Request): Response | null {
+  const expected = Deno.env.get("SUPABASE_ANON_KEY")?.trim();
+  if (!expected) {
+    console.error("analyze-meal: SUPABASE_ANON_KEY missing in Edge env");
+    return new Response(JSON.stringify({ error: "Server misconfigured" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+  const apikey = req.headers.get("apikey")?.trim() ?? "";
+  const auth = req.headers.get("Authorization")?.trim() ?? "";
+  const bearer = auth.startsWith("Bearer ") ? auth.slice(7).trim() : "";
+  const ok = apikey === expected || bearer === expected;
+  if (ok) return null;
+  return new Response(JSON.stringify({ error: "Unauthorized", hint: "Send apikey + Authorization Bearer matching project publishable key" }), {
+    status: 401,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
 function mockOutput(): MealAIOutput {
   return {
     items: [
@@ -156,8 +177,8 @@ Deno.serve(async (req) => {
     });
   }
 
-  // Gateway `verify_jwt` already ensures a valid Supabase-signed JWT (user session or anon).
-  // Tighten with `auth.getUser()` + require `sub` once Supabase Swift auth is wired in the app.
+  const authFail = unauthorizedUnlessProjectKey(req);
+  if (authFail) return authFail;
 
   let payload: { image_base64?: string; user_id?: string };
   try {
