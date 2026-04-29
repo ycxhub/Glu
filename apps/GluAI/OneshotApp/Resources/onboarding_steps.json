@@ -1,0 +1,180 @@
+{
+  "steps": [
+    {
+      "id": "welcome",
+      "kind": "welcome",
+      "title": "Glu AI",
+      "subtitle": "Photo meals. Smarter carb context — educational only.",
+      "options": null,
+      "cta": "Get Started"
+    },
+    {
+      "id": "dm_type",
+      "kind": "singleChoice",
+      "title": "What best describes you?",
+      "subtitle": null,
+      "options": ["Type 1", "Type 2", "Prediabetes", "Gestational", "Not sure / still learning"],
+      "cta": "Continue"
+    },
+    {
+      "id": "carb_think",
+      "kind": "singleChoice",
+      "title": "When you eat, how often do you think about carbs?",
+      "subtitle": null,
+      "options": ["Rarely", "Sometimes", "Most meals", "Always"],
+      "cta": "Continue"
+    },
+    {
+      "id": "tried_log",
+      "kind": "singleChoice",
+      "title": "Have you tried logging meals or diabetes apps before?",
+      "subtitle": null,
+      "options": ["Yes", "No"],
+      "cta": "Continue"
+    },
+    {
+      "id": "barriers",
+      "kind": "multiChoice",
+      "title": "What usually gets in the way?",
+      "subtitle": "Select all that apply.",
+      "options": [
+        "Too time-consuming",
+        "Hard to guess carbs",
+        "Forget to log",
+        "Apps feel clinical",
+        "Don't trust estimates",
+        "Not sure what to aim for"
+      ],
+      "cta": "Continue"
+    },
+    {
+      "id": "promise",
+      "kind": "info",
+      "title": "Most members build a steadier logging habit in 3 weeks",
+      "subtitle": "Self-reported consistency — not a medical outcome claim.",
+      "options": null,
+      "cta": "Continue"
+    },
+    {
+      "id": "goals",
+      "kind": "multiChoice",
+      "title": "What are you hoping Glu AI helps with?",
+      "subtitle": null,
+      "options": [
+        "Fewer sharp swings after meals (how I feel)",
+        "Better carb awareness",
+        "Lighter logging workload",
+        "Weight trend support",
+        "Notes for my care team"
+      ],
+      "cta": "Continue"
+    },
+    {
+      "id": "carb_comfort",
+      "kind": "singleChoice",
+      "title": "Do you already have a daily carb target from your clinician?",
+      "subtitle": null,
+      "options": ["Yes, I have a number", "I'm figuring it out", "Prefer not to use a number now"],
+      "cta": "Continue"
+    },
+    {
+      "id": "eat_pattern",
+      "kind": "singleChoice",
+      "title": "Which sounds most like you?",
+      "subtitle": null,
+      "options": ["3 meals", "Grazer / small meals", "Intermittent fasting", "Irregular schedule"],
+      "cta": "Continue"
+    },
+    {
+      "id": "strictness",
+      "kind": "singleChoice",
+      "title": "How direct should tips feel?",
+      "subtitle": null,
+      "options": ["Gentle nudges", "Balanced", "More direct (still not medical commands)"],
+      "cta": "Continue"
+    },
+    {
+      "id": "food_focus",
+      "kind": "multiChoice",
+      "title": "Where do you want extra awareness?",
+      "subtitle": null,
+      "options": ["Restaurant meals", "Takeout", "Home cooking", "Packaged snacks", "Sweets / desserts", "Drinks"],
+      "cta": "Continue"
+    },
+    {
+      "id": "comorbid",
+      "kind": "multiChoice",
+      "title": "Anything else you're comfortable sharing? (Optional)",
+      "subtitle": "Select any — or choose “None of these”.",
+      "options": [
+        "None of these",
+        "High blood pressure",
+        "Kidney-related guidance from my clinician",
+        "Celiac / gluten-free",
+        "Vegetarian / vegan"
+      ],
+      "cta": "Continue"
+    },
+    {
+      "id": "social_proof",
+      "kind": "info",
+      "title": "People use Glu AI to log faster and think clearer about meals",
+      "subtitle": "Replace with real quotes after launch — this is placeholder social proof.",
+      "options": null,
+      "cta": "Continue"
+    },
+    {
+      "id": "accountability",
+      "kind": "singleChoice",
+      "title": "What helps you stay consistent?",
+      "subtitle": null,
+      "options": ["Reminders", "Streaks", "Weekly recap", "Just opening the app when I need it"],
+      "cta": "Continue"
+    },
+    {
+      "id": "aspirations",
+      "kind": "multiChoice",
+      "title": "In the next month, you'd love to…",
+      "subtitle": null,
+      "options": [
+        "Feel more in control at meals",
+        "Spend less time logging",
+        "See my patterns clearly",
+        "Bring better notes to appointments"
+      ],
+      "cta": "Continue"
+    },
+    {
+      "id": "notify_prime",
+      "kind": "notificationPriming",
+      "title": "Stay consistent with gentle reminders",
+      "subtitle": "1–2 nudges on days you choose — never spam. Change anytime in Settings.",
+      "options": null,
+      "cta": "Enable Reminders"
+    },
+    {
+      "id": "attribution",
+      "kind": "singleChoice",
+      "title": "How did you hear about us?",
+      "subtitle": null,
+      "options": ["TikTok", "Instagram", "Friend / family", "Google", "App Store", "Clinician / educator", "Other"],
+      "cta": "Continue"
+    },
+    {
+      "id": "calculating",
+      "kind": "calculating",
+      "title": "Creating your spike-smart plan…",
+      "subtitle": null,
+      "options": null,
+      "cta": "Continue"
+    },
+    {
+      "id": "reveal",
+      "kind": "planReveal",
+      "title": "Your starting plan is ready",
+      "subtitle": "Educational only — not medical advice.",
+      "options": null,
+      "cta": "Save my plan"
+    }
+  ]
+}

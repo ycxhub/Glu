@@ -1,0 +1,36 @@
+{
+  "steps": [
+    {
+      "id": "welcome",
+      "kind": "welcome",
+      "title": "Welcome to Oneshot",
+      "subtitle": "Template — replace with your PRD copy.",
+      "options": null,
+      "cta": "Get Started"
+    },
+    {
+      "id": "goal",
+      "kind": "singleChoice",
+      "title": "What is your main goal?",
+      "subtitle": null,
+      "options": ["Option A", "Option B", "Option C"],
+      "cta": "Continue"
+    },
+    {
+      "id": "calculating",
+      "kind": "calculating",
+      "title": "Creating your plan...",
+      "subtitle": null,
+      "options": null,
+      "cta": "Continue"
+    },
+    {
+      "id": "reveal",
+      "kind": "planReveal",
+      "title": "Your plan is ready",
+      "subtitle": null,
+      "options": null,
+      "cta": "Save my plan"
+    }
+  ]
+}

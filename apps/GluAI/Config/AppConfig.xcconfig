@@ -1,0 +1,6 @@
+// Shared app configuration (tracked). Optional local secrets:
+#include? "Secrets.xcconfig"
+
+// Injected into generated Info.plist — read by `Bundle.main` in `Services.swift`
+INFOPLIST_KEY_SUPABASE_URL_HOST = $(SUPABASE_URL_HOST)
+INFOPLIST_KEY_SUPABASE_ANON_KEY = $(SUPABASE_ANON_KEY)

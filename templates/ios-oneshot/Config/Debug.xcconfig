@@ -1,0 +1,7 @@
+// TODO(oneshot): add a Secrets.xcconfig (gitignored) with:
+// SUPABASE_URL = https://xxx.supabase.co
+// Then in target Build Settings, set INFOPLIST_KEY_SUPABASE_URL = $(SUPABASE_URL) or read from xcconfig via User-Defined.
+// Never commit real keys.
+#include? "Secrets.xcconfig"
+
+GCC_PREPROCESSOR_DEFINITIONS = $(inherited) DEBUG=1

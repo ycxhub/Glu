@@ -1,0 +1,329 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		70E7DE4DC8BC40618C106E90 /* OneshotAppApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B9A0D3B70784468A9B9D3C5 /* OneshotAppApp.swift */; };
+		5851792D6E184843B6F4F290 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD32A1E204A54420926A254D /* AppState.swift */; };
+		E605CE40514F4BDFA36AAC15 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E18F8FB2B7F4E9188753397 /* Theme.swift */; };
+		1034941421F54D79B41E2D0A /* AppRootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E903C2F6677743F7B678BB81 /* AppRootView.swift */; };
+		A3287781ABA0493DBAEF7CF6 /* OnboardingStepDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7465DD9681438FA2C6A11A /* OnboardingStepDefinition.swift */; };
+		20A48694C749432D81914843 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22A6A84373741C881EAD1BA /* OnboardingViewModel.swift */; };
+		B59D5F7CEF9F45338A40612D /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C165E7444C3247178FA0BAFA /* OnboardingView.swift */; };
+		199F9F8D61C74A19A65DBE1D /* Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3CB4136C42411E9F0A1FF6 /* Services.swift */; };
+		16CAB11A5EB34A0ABE2BEC3F /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 188ABD6E08034225AB1FEBE1 /* AuthView.swift */; };
+		29B111E52C0347CDB058941E /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAE207C863B4548AEA1EF2C /* PaywallView.swift */; };
+		798E3C36C57E46F3AC6FEB53 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A81FB4DF754BA18654C556 /* MainTabView.swift */; };
+		8A4824A80CE24F3896FFAA15 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5AD54C036494DF6A16E56C5 /* HomeView.swift */; };
+		9C479623027E4855A2E74ADB /* CoreActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE64CF01BE0D4ABEA105BEF4 /* CoreActionView.swift */; };
+		3B7B74D572B04CAD82F81764 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120CD3C862D744C98C240ABA /* SettingsView.swift */; };
+		5AC8F8A39D754C4081D49ED0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */; };
+		6F9C2B1A4E7C43A3A0E7F0C1 /* onboarding_steps.json in Resources */ = {isa = PBXBuildFile; fileRef = 6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1A0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OneshotApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7B9A0D3B70784468A9B9D3C5 /* OneshotAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneshotAppApp.swift; sourceTree = "<group>"; };
+		FD32A1E204A54420926A254D /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		3E18F8FB2B7F4E9188753397 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
+		E903C2F6677743F7B678BB81 /* AppRootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRootView.swift; sourceTree = "<group>"; };
+		0F7465DD9681438FA2C6A11A /* OnboardingStepDefinition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingStepDefinition.swift; sourceTree = "<group>"; };
+		D22A6A84373741C881EAD1BA /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
+		C165E7444C3247178FA0BAFA /* OnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingView.swift; sourceTree = "<group>"; };
+		EC3CB4136C42411E9F0A1FF6 /* Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Services.swift; sourceTree = "<group>"; };
+		188ABD6E08034225AB1FEBE1 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		4CAE207C863B4548AEA1EF2C /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		10A81FB4DF754BA18654C556 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
+		B5AD54C036494DF6A16E56C5 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		FE64CF01BE0D4ABEA105BEF4 /* CoreActionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreActionView.swift; sourceTree = "<group>"; };
+		120CD3C862D744C98C240ABA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
+		6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = onboarding_steps.json; path = Resources/onboarding_steps.json; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		1B0E0F0D0A0A4A0A0A0A0A0A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		1C0E0F0D0A0A4A0A0A0A0A0A = {
+			isa = PBXGroup;
+			children = (
+				1D0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp */,
+				1E0E0F0D0A0A4A0A0A0A0A0A /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		1D0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp */ = {
+			isa = PBXGroup;
+			children = (
+				7B9A0D3B70784468A9B9D3C5 /* OneshotAppApp.swift */,
+				FD32A1E204A54420926A254D /* AppState.swift */,
+				3E18F8FB2B7F4E9188753397 /* Theme.swift */,
+				E903C2F6677743F7B678BB81 /* AppRootView.swift */,
+				0F7465DD9681438FA2C6A11A /* OnboardingStepDefinition.swift */,
+				D22A6A84373741C881EAD1BA /* OnboardingViewModel.swift */,
+				C165E7444C3247178FA0BAFA /* OnboardingView.swift */,
+				EC3CB4136C42411E9F0A1FF6 /* Services.swift */,
+				188ABD6E08034225AB1FEBE1 /* AuthView.swift */,
+				4CAE207C863B4548AEA1EF2C /* PaywallView.swift */,
+				10A81FB4DF754BA18654C556 /* MainTabView.swift */,
+				B5AD54C036494DF6A16E56C5 /* HomeView.swift */,
+				FE64CF01BE0D4ABEA105BEF4 /* CoreActionView.swift */,
+				120CD3C862D744C98C240ABA /* SettingsView.swift */,
+				6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */,
+				6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */,
+			);
+			path = OneshotApp;
+			sourceTree = "<group>";
+		};
+		1E0E0F0D0A0A4A0A0A0A0A0A /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				1A0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		1F0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2A0E0F0D0A0A4A0A0A0A0A0A /* Build configuration list for PBXNativeTarget "OneshotApp" */;
+			buildPhases = (
+				2B0E0F0D0A0A4A0A0A0A0A0A /* Sources */,
+				1B0E0F0D0A0A4A0A0A0A0A0A /* Frameworks */,
+				2C0E0F0D0A0A4A0A0A0A0A0A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OneshotApp;
+			productName = OneshotApp;
+			productReference = 1A0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		2D0E0F0D0A0A4A0A0A0A0A0A /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+			};
+			buildConfigurationList = 2E0E0F0D0A0A4A0A0A0A0A0A /* Build configuration list for PBXProject "OneshotApp" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 1C0E0F0D0A0A4A0A0A0A0A0A;
+			productRefGroup = 1E0E0F0D0A0A4A0A0A0A0A0A /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				1F0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2C0E0F0D0A0A4A0A0A0A0A0A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5AC8F8A39D754C4081D49ED0 /* Assets.xcassets in Resources */,
+				6F9C2B1A4E7C43A3A0E7F0C1 /* onboarding_steps.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		2B0E0F0D0A0A4A0A0A0A0A0A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				70E7DE4DC8BC40618C106E90 /* OneshotAppApp.swift in Sources */,
+				5851792D6E184843B6F4F290 /* AppState.swift in Sources */,
+				E605CE40514F4BDFA36AAC15 /* Theme.swift in Sources */,
+				1034941421F54D79B41E2D0A /* AppRootView.swift in Sources */,
+				A3287781ABA0493DBAEF7CF6 /* OnboardingStepDefinition.swift in Sources */,
+				20A48694C749432D81914843 /* OnboardingViewModel.swift in Sources */,
+				B59D5F7CEF9F45338A40612D /* OnboardingView.swift in Sources */,
+				199F9F8D61C74A19A65DBE1D /* Services.swift in Sources */,
+				16CAB11A5EB34A0ABE2BEC3F /* AuthView.swift in Sources */,
+				29B111E52C0347CDB058941E /* PaywallView.swift in Sources */,
+				798E3C36C57E46F3AC6FEB53 /* MainTabView.swift in Sources */,
+				8A4824A80CE24F3896FFAA15 /* HomeView.swift in Sources */,
+				9C479623027E4855A2E74ADB /* CoreActionView.swift in Sources */,
+				3B7B74D572B04CAD82F81764 /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		2F0E0F0D0A0A4A0A0A0A0A0A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_PREPROCESSOR_DEFINITIONS = "DEBUG=1";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		2F0E0F0D0A0A4A0A0A0A0A0B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				COPY_PHASE_STRIP = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_NO_COMMON_BLOCKS = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		2F0E0F0D0A0A4A0A0A0A0A0C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_NSPrivacyAccessedAPITypes = "";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "The template uses PhotosPicker to attach images to your core action.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourorg.OneshotApp;
+				PRODUCT_NAME = OneshotApp;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		2F0E0F0D0A0A4A0A0A0A0A0D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = "";
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "The template uses PhotosPicker to attach images to your core action.";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.yourorg.OneshotApp;
+				PRODUCT_NAME = OneshotApp;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2E0E0F0D0A0A4A0A0A0A0A0A /* Build configuration list for PBXProject "OneshotApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2F0E0F0D0A0A4A0A0A0A0A0A /* Debug */,
+				2F0E0F0D0A0A4A0A0A0A0A0B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2A0E0F0D0A0A4A0A0A0A0A0A /* Build configuration list for PBXNativeTarget "OneshotApp" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				2F0E0F0D0A0A4A0A0A0A0A0C /* Debug */,
+				2F0E0F0D0A0A4A0A0A0A0A0D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 2D0E0F0D0A0A4A0A0A0A0A0A /* Project object */;
+}

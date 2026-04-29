@@ -1,0 +1,12 @@
+.DS_Store
+
+# Local iOS secrets (see templates/ios-oneshot/Config/)
+**/Secrets.xcconfig
+
+# Env files (never commit secrets)
+.env
+.env.local
+.env*.local
+
+# Supabase CLI local cache
+**/.temp/

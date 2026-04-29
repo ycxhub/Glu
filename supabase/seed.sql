@@ -1,0 +1,2 @@
+-- Optional seed data for local `supabase db reset`.
+-- Glu AI ships without seeds; add fixtures here if needed.
