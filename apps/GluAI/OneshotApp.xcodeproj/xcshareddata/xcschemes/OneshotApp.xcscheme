@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
    LastUpgradeVersion = "1500"
-   version = "1.7">
+   version = "1.8">
    <BuildAction
       parallelizeBuildables = "YES"
       buildImplicitDependencies = "YES">
@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1F0E0F0D0A0A4A0A0A0A0A0A"
-               BuildableName = "OneshotApp.app"
+               BuildableName = "Glu AI.app"
                BlueprintName = "OneshotApp"
                ReferencedContainer = "container:OneshotApp.xcodeproj">
             </BuildableReference>
@@ -26,6 +26,8 @@
       buildConfiguration = "Debug"
       selectedDebugger = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncher = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES"
       shouldAutocreateTestPlan = "YES">
    </TestAction>
@@ -33,6 +35,8 @@
       buildConfiguration = "Debug"
       selectedDebugger = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncher = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -44,7 +48,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1F0E0F0D0A0A4A0A0A0A0A0A"
-            BuildableName = "OneshotApp.app"
+            BuildableName = "Glu AI.app"
             BlueprintName = "OneshotApp"
             ReferencedContainer = "container:OneshotApp.xcodeproj">
          </BuildableReference>
@@ -61,7 +65,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1F0E0F0D0A0A4A0A0A0A0A0A"
-            BuildableName = "OneshotApp.app"
+            BuildableName = "Glu AI.app"
             BlueprintName = "OneshotApp"
             ReferencedContainer = "container:OneshotApp.xcodeproj">
          </BuildableReference>

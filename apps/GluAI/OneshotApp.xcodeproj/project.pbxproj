@@ -23,6 +23,7 @@
 		3B7B74D572B04CAD82F81764 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120CD3C862D744C98C240ABA /* SettingsView.swift */; };
 		F91A10F00B0A4A0A0A0A0AB1 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91A10F00B0A4A0A0A0A0AA1 /* HistoryView.swift */; };
 		F91A10F00B0A4A0A0A0A0AB2 /* MealLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91A10F00B0A4A0A0A0A0AA2 /* MealLogging.swift */; };
+		F91A10F00B0A4A0A0A0A0AC5 /* AppSecrets.plist in Resources */ = {isa = PBXBuildFile; fileRef = F91A10F00B0A4A0A0A0A0AC4 /* AppSecrets.plist */; };
 		5AC8F8A39D754C4081D49ED0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */; };
 		6F9C2B1A4E7C43A3A0E7F0C1 /* onboarding_steps.json in Resources */ = {isa = PBXBuildFile; fileRef = 6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */; };
 /* End PBXBuildFile section */
@@ -45,6 +46,7 @@
 		120CD3C862D744C98C240ABA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		F91A10F00B0A4A0A0A0A0AA1 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		F91A10F00B0A4A0A0A0A0AA2 /* MealLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MealLogging.swift; sourceTree = "<group>"; };
+		F91A10F00B0A4A0A0A0A0AC4 /* AppSecrets.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = AppSecrets.plist; path = Resources/AppSecrets.plist; sourceTree = "<group>"; };
 		6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
 		6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = onboarding_steps.json; path = Resources/onboarding_steps.json; sourceTree = "<group>"; };
 		A1B2C3D40A0A4A0A0A0A0E01 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 				F91A10F00B0A4A0A0A0A0AA1 /* HistoryView.swift */,
 				F91A10F00B0A4A0A0A0A0AA2 /* MealLogging.swift */,
 				6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */,
+				F91A10F00B0A4A0A0A0A0AC4 /* AppSecrets.plist */,
 				6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */,
 			);
 			path = OneshotApp;
@@ -168,6 +171,7 @@
 			files = (
 				5AC8F8A39D754C4081D49ED0 /* Assets.xcassets in Resources */,
 				6F9C2B1A4E7C43A3A0E7F0C1 /* onboarding_steps.json in Resources */,
+				F91A10F00B0A4A0A0A0A0AC5 /* AppSecrets.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

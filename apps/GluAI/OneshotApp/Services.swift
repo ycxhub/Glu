@@ -19,7 +19,14 @@ final class NoopAnalytics: AnalyticsService {
 // MARK: - API (Supabase Edge proxy — no LLM keys in app)
 
 enum APIConfig {
-    /// Base URL (`https://…supabase.co`). `Secrets.xcconfig` uses `SUPABASE_URL_HOST` because unquoted `https://` is treated as a comment in `.xcconfig`.
+    private static let appSecrets: [String: String] = {
+        guard let url = Bundle.main.url(forResource: "AppSecrets", withExtension: "plist"),
+              let dict = NSDictionary(contentsOf: url) as? [String: Any]
+        else { return [:] }
+        return dict.compactMapValues { $0 as? String }
+    }()
+
+    /// Base URL (`https://…supabase.co`). Prefer `AppSecrets.plist` (see `AppSecrets.plist.example`); Info.plist keys optional.
     static var supabaseURL: String? {
         if let full = Bundle.main.object(forInfoDictionaryKey: "SUPABASE_URL") as? String {
             let u = full.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -29,12 +36,20 @@ enum APIConfig {
             let h = host.trimmingCharacters(in: .whitespacesAndNewlines)
             if !h.isEmpty { return "https://\(h)" }
         }
+        if let h = appSecrets["SUPABASE_URL_HOST"]?.trimmingCharacters(in: .whitespacesAndNewlines), !h.isEmpty {
+            return "https://\(h)"
+        }
         return nil
     }
 
-    /// Optional anon key for functions that accept apikey header (still gate on server with user JWT when wired).
+    /// Publishable key (`sb_publishable_…`) or legacy anon JWT; never use `sb_secret_…` or `service_role` in the app.
     static var supabaseAnonKey: String? {
-        Bundle.main.object(forInfoDictionaryKey: "SUPABASE_ANON_KEY") as? String
+        let fromInfo = (Bundle.main.object(forInfoDictionaryKey: "SUPABASE_PUBLISHABLE_KEY") as? String)
+            ?? (Bundle.main.object(forInfoDictionaryKey: "SUPABASE_ANON_KEY") as? String)
+        if let k = fromInfo?.trimmingCharacters(in: .whitespacesAndNewlines), !k.isEmpty { return k }
+        if let k = appSecrets["SUPABASE_PUBLISHABLE_KEY"]?.trimmingCharacters(in: .whitespacesAndNewlines), !k.isEmpty { return k }
+        if let k = appSecrets["SUPABASE_ANON_KEY"]?.trimmingCharacters(in: .whitespacesAndNewlines), !k.isEmpty { return k }
+        return nil
     }
 
     static var analyzeMealPath: String {

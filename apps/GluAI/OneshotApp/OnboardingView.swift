@@ -187,18 +187,14 @@ private struct OnboardingStepContent: View {
             if let arr = vm.responses[step.id], step.kind == .multiChoice {
                 multi = Set(arr)
             }
-        }
-        .onAppear {
             #if DEBUG
             print("onboarding_screen:", step.id, vm.index)
             #endif
         }
-        .onAppear {
+        .task(id: "\(step.id)-\(vm.index)") {
             guard step.kind == .calculating else { return }
-            Task { @MainActor in
-                try? await Task.sleep(nanoseconds: 4_500_000_000)
-                onCalculatingComplete()
-            }
+            try? await Task.sleep(for: .seconds(4.5))
+            onCalculatingComplete()
         }
     }
 

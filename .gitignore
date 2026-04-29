@@ -2,6 +2,7 @@
 
 # Local iOS secrets (see templates/ios-oneshot/Config/)
 **/Secrets.xcconfig
+**/AppSecrets.plist
 
 # Env files (never commit secrets)
 .env
