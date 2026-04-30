@@ -35,3 +35,21 @@ _Complexity:_ `git show HEAD --numstat` total additions+deletions ≈63 lines ac
 3. `apps/GluAI/OneshotApp/Services.swift` — 18
 
 _Complexity:_ `git show HEAD --numstat` total additions+deletions 183 lines across 5 files → Medium.
+
+## #3 — GluAI: RevenueCat, staff roles, app icons, ship prep [High]
+
+**Date & time (IST):** 2026-05-01 01:17 IST
+
+**Deployment notes**
+
+- **New features:** RevenueCat SDK integration (subscription service, paywall purchase/restore); `GluAccess` staff-role checks with Supabase `user_staff_roles` migration; debug navigator overlay for internal QA navigation.
+- **Feature enhancements:** App Icon variants (default, dark, tinted); app entitlements; SPM `Package.resolved`; app root, auth, settings, and meal flows aligned with subscription and access gating; README and `AppSecrets.plist.example` extended for RevenueCat public SDK key.
+- **Bug fixes:** None called out in this release.
+
+**Largest changes (by lines touched):**
+
+1. `apps/GluAI/OneshotApp/PaywallView.swift` — 255 (96 insertions, 159 deletions)
+2. `apps/GluAI/OneshotApp/AppRootView.swift` — 156 (126 insertions, 30 deletions)
+3. `apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift` — 156 (new file)
+
+_Complexity:_ `git show HEAD --numstat` → ~1.4k insert/delete across 23 files (excluding binary PNG line counts) → High.
