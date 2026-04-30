@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import Supabase
 
 // MARK: - Analytics (`prd-glu-ai/architecture.md`)
 
@@ -55,6 +56,41 @@ enum APIConfig {
     static var analyzeMealPath: String {
         (Bundle.main.object(forInfoDictionaryKey: "SUPABASE_ANALYZE_MEAL_PATH") as? String)
             ?? "functions/v1/analyze-meal"
+    }
+
+    /// RevenueCat public SDK key (same app). Omit or placeholder to run without StoreKit / dashboard.
+    static var revenueCatAPIKey: String? {
+        if let k = appSecrets["REVENUECAT_API_KEY"]?.trimmingCharacters(in: .whitespacesAndNewlines), !k.isEmpty { return k }
+        if let k = Bundle.main.object(forInfoDictionaryKey: "REVENUECAT_API_KEY") as? String,
+           !k.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return k.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return nil
+    }
+
+    /// Must match the entitlement identifier in RevenueCat (Glu Gold).
+    static var revenueCatEntitlementId: String {
+        if let k = appSecrets["REVENUECAT_ENTITLEMENT_ID"]?.trimmingCharacters(in: .whitespacesAndNewlines), !k.isEmpty {
+            return k
+        }
+        if let k = Bundle.main.object(forInfoDictionaryKey: "REVENUECAT_ENTITLEMENT_ID") as? String,
+           !k.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return k.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return "Glu Gold"
+    }
+
+    /// Shared anon-key client for auth + PostgREST. Nil when URL/key missing (mock / offline).
+    static func makeSupabaseClient() -> SupabaseClient? {
+        guard
+            let raw = supabaseURL?.trimmingCharacters(in: CharacterSet(charactersIn: "/")),
+            let url = URL(string: raw),
+            let key = supabaseAnonKey,
+            !key.isEmpty
+        else { return nil }
+        // Opt into forthcoming default: emit stored session as `.initialSession` before refresh (see supabase-swift PR #822).
+        let options = SupabaseClientOptions(auth: .init(emitLocalSessionAsInitialSession: true))
+        return SupabaseClient(supabaseURL: url, supabaseKey: key, options: options)
     }
 }
 
@@ -144,43 +180,74 @@ final class AuthController {
     var isSignedIn: Bool = false
     var userId: String?
     var displayName: String?
+    /// JWT for Supabase Edge (`Authorization: Bearer`).
+    var accessToken: String?
+    /// From `user_staff_roles`; assign only in Supabase SQL.
+    var staffRole: StaffRole?
 
-    func setSession(userId: String, displayName: String? = nil) {
+    private weak var supabaseRef: SupabaseClient?
+
+    func attachSupabase(_ client: SupabaseClient?) {
+        supabaseRef = client
+    }
+
+    func applySupabaseSession(_ session: Session, preferredDisplayName: String? = nil) {
+        isSignedIn = true
+        userId = session.user.id.uuidString
+        accessToken = session.accessToken
+        if let p = preferredDisplayName, !p.isEmpty {
+            displayName = p
+        } else {
+            displayName = session.user.email
+        }
+    }
+
+    func setMockSession(userId: String, displayName: String? = nil) {
         isSignedIn = true
         self.userId = userId
         self.displayName = displayName
+        accessToken = nil
+        staffRole = nil
+    }
+
+    func fetchStaffRoleIfNeeded() async {
+        guard let client = supabaseRef, let uidStr = userId, let uid = UUID(uuidString: uidStr) else {
+            staffRole = nil
+            return
+        }
+        staffRole = await StaffRoleService.fetchStaffRole(client: client, userId: uid)
     }
 
     func signOut() {
         isSignedIn = false
         userId = nil
         displayName = nil
+        accessToken = nil
+        staffRole = nil
+    }
+
+    /// Ends Supabase session then clears local auth state.
+    func signOutFromSupabase() async {
+        if let client = supabaseRef {
+            try? await client.auth.signOut()
+        }
+        signOut()
     }
 }
 
-// MARK: - Subscriptions (RevenueCat + Superwall — stub until dashboards wired)
+// MARK: - Subscriptions (RevenueCat — see `RevenueCatSubscriptionService.swift`)
 
 @MainActor
 protocol SubscriptionControlling: AnyObject {
     var isPremium: Bool { get }
+    var isInTrialPeriod: Bool { get }
     func restorePurchases() async throws
     func preparePaywall() async
-    func purchaseSelectedPlan() async throws
+    func purchaseSelectedPlan(annualPreferred: Bool) async throws
 }
 
-@MainActor
-@Observable
-final class LocalSubscriptionService: SubscriptionControlling {
-    var isPremium: Bool = false
-
-    func restorePurchases() async throws {}
-
-    func preparePaywall() async {}
-
-    /// Dev / until RevenueCat: flips premium for funnel testing.
-    func purchaseSelectedPlan() async throws {
-        isPremium = true
-    }
+extension SubscriptionControlling {
+    var isInTrialPeriod: Bool { false }
 }
 
 // MARK: - Meal analysis gateway

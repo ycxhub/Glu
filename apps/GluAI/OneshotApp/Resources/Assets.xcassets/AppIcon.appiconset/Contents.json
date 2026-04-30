@@ -1,6 +1,31 @@
 {
   "images" : [
     {
+      "filename" : "glu_ai_icon_dark_1024.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "dark"
+        }
+      ],
+      "filename" : "glu_ai_icon_default_1024.png",
+      "idiom" : "universal",
+      "platform" : "ios",
+      "size" : "1024x1024"
+    },
+    {
+      "appearances" : [
+        {
+          "appearance" : "luminosity",
+          "value" : "tinted"
+        }
+      ],
+      "filename" : "glu_ai_icon_tinted_light_1024.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

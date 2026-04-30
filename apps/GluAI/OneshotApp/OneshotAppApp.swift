@@ -5,6 +5,10 @@ import SwiftUI
 struct OneshotAppApp: App {
     @State private var appState = AppState()
 
+    init() {
+        RevenueCatSubscriptionService.configurePurchasesAtAppLaunch()
+    }
+
     var body: some Scene {
         WindowGroup {
             AppRootView()

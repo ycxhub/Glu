@@ -1,11 +1,17 @@
+import RevenueCatUI
 import SwiftUI
 
 struct SettingsView: View {
     @Environment(AppState.self) private var appState
     @Bindable var auth: AuthController
-    @Bindable var sub: LocalSubscriptionService
+    @Bindable var sub: RevenueCatSubscriptionService
     @State private var showDeleteConfirm = false
     @State private var err: String?
+
+    private var revenueCatConfigured: Bool {
+        guard let k = APIConfig.revenueCatAPIKey, !k.isEmpty, k != "REPLACE_ME" else { return false }
+        return true
+    }
 
     var body: some View {
         NavigationStack {
@@ -18,24 +24,54 @@ struct SettingsView: View {
                         Text("User ID: \(u)")
                             .font(AppTheme.Typography.caption)
                     }
+                    if let role = auth.staffRole {
+                        Text("Staff role: \(role.rawValue)")
+                            .font(AppTheme.Typography.caption)
+                            .foregroundStyle(AppTheme.secondaryLabel)
+                    }
                 }
                 Section("Subscription") {
-                    Text("Premium: \(appState.isPremium ? "Yes" : "No")")
+                    Text("Glu Gold: \(sub.isPremium ? "Active" : "Inactive")")
+                    if sub.isInTrialPeriod {
+                        Text("Trial active").font(AppTheme.Typography.caption).foregroundStyle(AppTheme.secondaryLabel)
+                    }
                     Button("Restore purchases") {
-                        Task { try? await sub.restorePurchases() }
+                        Task {
+                            try? await sub.restorePurchases()
+                            if sub.isPremium {
+                                appState.setPremiumUnlocked()
+                            }
+                        }
+                    }
+                    if revenueCatConfigured {
+                        NavigationLink("Subscription & billing help") {
+                            CustomerCenterView()
+                                .onCustomerCenterRestoreCompleted { customerInfo in
+                                    sub.updateFromCustomerInfo(customerInfo)
+                                    if sub.isPremium {
+                                        appState.setPremiumUnlocked()
+                                    }
+                                }
+                        }
                     }
                 }
                 Section("Developer") {
                     Button("Reset onboarding (QA)") {
-                        auth.signOut()
-                        appState.resetOnboardingForQA()
+                        Task {
+                            await sub.logOut()
+                            await auth.signOutFromSupabase()
+                            appState.resetOnboardingForQA()
+                        }
                     }
                     .font(AppTheme.Typography.footnote)
                 }
                 Section {
                     Button("Sign out") {
-                        auth.signOut()
-                        appState.signOutUser()
+                        Task {
+                            await sub.logOut()
+                            await auth.signOutFromSupabase()
+                            appState.signOutUser()
+                        }
                     }
                     Button("Delete account (5.1.1(v) flow)", role: .destructive) {
                         showDeleteConfirm = true

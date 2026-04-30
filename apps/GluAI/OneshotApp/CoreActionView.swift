@@ -87,6 +87,7 @@ struct CoreActionView: View {
                                 output: wrap.output
                             )
                             meals.add(entry)
+                            Task { await meals.persistInsert(entry) }
                             analytics.track("meal_saved", properties: ["spike": wrap.output.spikeRisk])
                             pendingResult = nil
                         },
@@ -126,7 +127,7 @@ struct CoreActionView: View {
         analytics.track("meal_analysis_started", properties: nil)
         let gateway = AIGatewayService(api: api)
         do {
-            let out = try await gateway.analyzeMealPhoto(jpegData: jpeg, userId: uid, accessToken: nil)
+            let out = try await gateway.analyzeMealPhoto(jpegData: jpeg, userId: uid, accessToken: auth.accessToken)
             await MainActor.run {
                 pendingResult = IdentifiableResult(output: out, imageData: jpeg)
                 busy = false

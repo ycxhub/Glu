@@ -13,6 +13,12 @@
 		20A48694C749432D81914843 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22A6A84373741C881EAD1BA /* OnboardingViewModel.swift */; };
 		29B111E52C0347CDB058941E /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAE207C863B4548AEA1EF2C /* PaywallView.swift */; };
 		3B7B74D572B04CAD82F81764 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120CD3C862D744C98C240ABA /* SettingsView.swift */; };
+		5034941421F54D79B41E303 /* GluAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5034941421F54D79B41E300 /* GluAccess.swift */; };
+		5034941421F54D79B41E304 /* RevenueCatSubscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5034941421F54D79B41E301 /* RevenueCatSubscriptionService.swift */; };
+		5034941421F54D79B41E305 /* DevNavigatorOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5034941421F54D79B41E302 /* DevNavigatorOverlay.swift */; };
+		5034941421F54D79B41E306 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 5034941421F54D79B41E310 /* Supabase */; };
+		5034941421F54D79B41E307 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 5034941421F54D79B41E311 /* RevenueCat */; };
+		5034941421F54D79B41E308 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5034941421F54D79B41E314 /* RevenueCatUI */; };
 		5851792D6E184843B6F4F290 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD32A1E204A54420926A254D /* AppState.swift */; };
 		5AC8F8A39D754C4081D49ED0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */; };
 		6F9C2B1A4E7C43A3A0E7F0C1 /* onboarding_steps.json in Resources */ = {isa = PBXBuildFile; fileRef = 6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */; };
@@ -36,6 +42,10 @@
 		1A0E0F0D0A0A4A0A0A0A0A0A /* Glu AI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Glu AI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E18F8FB2B7F4E9188753397 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		4CAE207C863B4548AEA1EF2C /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
+		5034941421F54D79B41E300 /* GluAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GluAccess.swift; sourceTree = "<group>"; };
+		5034941421F54D79B41E301 /* RevenueCatSubscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatSubscriptionService.swift; sourceTree = "<group>"; };
+		5034941421F54D79B41E302 /* DevNavigatorOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevNavigatorOverlay.swift; sourceTree = "<group>"; };
+		579A15512FA3BC1F00A94E66 /* OneshotApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = OneshotApp.entitlements; sourceTree = "<group>"; };
 		6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = onboarding_steps.json; path = Resources/onboarding_steps.json; sourceTree = "<group>"; };
 		6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
 		7B9A0D3B70784468A9B9D3C5 /* OneshotAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneshotAppApp.swift; sourceTree = "<group>"; };
@@ -58,6 +68,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5034941421F54D79B41E306 /* Supabase in Frameworks */,
+				5034941421F54D79B41E307 /* RevenueCat in Frameworks */,
+				5034941421F54D79B41E308 /* RevenueCatUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -76,6 +89,7 @@
 		1D0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp */ = {
 			isa = PBXGroup;
 			children = (
+				579A15512FA3BC1F00A94E66 /* OneshotApp.entitlements */,
 				7B9A0D3B70784468A9B9D3C5 /* OneshotAppApp.swift */,
 				FD32A1E204A54420926A254D /* AppState.swift */,
 				3E18F8FB2B7F4E9188753397 /* Theme.swift */,
@@ -92,6 +106,9 @@
 				120CD3C862D744C98C240ABA /* SettingsView.swift */,
 				F91A10F00B0A4A0A0A0A0AA1 /* HistoryView.swift */,
 				F91A10F00B0A4A0A0A0A0AA2 /* MealLogging.swift */,
+				5034941421F54D79B41E300 /* GluAccess.swift */,
+				5034941421F54D79B41E301 /* RevenueCatSubscriptionService.swift */,
+				5034941421F54D79B41E302 /* DevNavigatorOverlay.swift */,
 				6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */,
 				F91A10F00B0A4A0A0A0A0AC4 /* AppSecrets.plist */,
 				6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */,
@@ -132,6 +149,11 @@
 			dependencies = (
 			);
 			name = OneshotApp;
+			packageProductDependencies = (
+				5034941421F54D79B41E310 /* Supabase */,
+				5034941421F54D79B41E311 /* RevenueCat */,
+				5034941421F54D79B41E314 /* RevenueCatUI */,
+			);
 			productName = OneshotApp;
 			productReference = 1A0E0F0D0A0A4A0A0A0A0A0A /* Glu AI.app */;
 			productType = "com.apple.product-type.application";
@@ -155,6 +177,10 @@
 				Base,
 			);
 			mainGroup = 1C0E0F0D0A0A4A0A0A0A0A0A;
+			packageReferences = (
+				5034941421F54D79B41E312 /* XCRemoteSwiftPackageReference "supabase-swift" */,
+				5034941421F54D79B41E313 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+			);
 			productRefGroup = 1E0E0F0D0A0A4A0A0A0A0A0A /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -198,6 +224,9 @@
 				3B7B74D572B04CAD82F81764 /* SettingsView.swift in Sources */,
 				F91A10F00B0A4A0A0A0A0AB1 /* HistoryView.swift in Sources */,
 				F91A10F00B0A4A0A0A0A0AB2 /* MealLogging.swift in Sources */,
+				5034941421F54D79B41E303 /* GluAccess.swift in Sources */,
+				5034941421F54D79B41E304 /* RevenueCatSubscriptionService.swift in Sources */,
+				5034941421F54D79B41E305 /* DevNavigatorOverlay.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -304,6 +333,7 @@
 			baseConfigurationReference = A1B2C3D40A0A4A0A0A0A0E01 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = OneshotApp/OneshotApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
@@ -337,10 +367,11 @@
 			baseConfigurationReference = A1B2C3D40A0A4A0A0A0A0E02 /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = OneshotApp/OneshotApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 653VGF4296;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
@@ -386,6 +417,43 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5034941421F54D79B41E312 /* XCRemoteSwiftPackageReference "supabase-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		5034941421F54D79B41E313 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios-spm.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5034941421F54D79B41E310 /* Supabase */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5034941421F54D79B41E312 /* XCRemoteSwiftPackageReference "supabase-swift" */;
+			productName = Supabase;
+		};
+		5034941421F54D79B41E311 /* RevenueCat */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5034941421F54D79B41E313 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCat;
+		};
+		5034941421F54D79B41E314 /* RevenueCatUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5034941421F54D79B41E313 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */;
+			productName = RevenueCatUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 2D0E0F0D0A0A4A0A0A0A0A0A /* Project object */;
 }
