@@ -53,3 +53,21 @@ _Complexity:_ `git show HEAD --numstat` total additions+deletions 183 lines acro
 3. `apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift` — 156 (new file)
 
 _Complexity:_ `git show HEAD --numstat` → ~1.4k insert/delete across 23 files (excluding binary PNG line counts) → High.
+
+## #4 — GluAI: Pastel redesign, free tier, Meal Estimate, PRD docs, accessibility [High]
+
+**Date & time (IST):** 2026-05-01 13:45 IST
+
+**Deployment notes**
+
+- **New features:** Free-tier path (5 meal analyses, paywall dismiss into free mode, gating on new analyses); PRD/task docs (`tasks/prd-glu-ai-redesign.md`, `tasks/tasks-glu-ai-redesign.md`, `apps/GluAI/design.md`, `screens*.md`); calm meal-analysis copy (`GluMealAnalysisUserCopy`), low-confidence / no-food hints on Meal Estimate.
+- **Feature enhancements:** Pastel Precision theme (light/dark), 19-step onboarding with tier reveal, Home/Log/History/Settings flows, full Meal Estimate edit/save pipeline; RevenueCat paywall secondary “Try 5 meals,” analytics (`auth_*`, tab views, meal funnel); Dynamic Type / VoiceOver / Reduce Motion–aware UI; app icon assets refresh; notifications usage string; `.gitignore` extended for `xcuserdata`.
+- **Bug fixes:** Log tab no longer surfaces raw `localizedDescription` for failed photo analysis.
+
+**Largest changes (by lines touched):**
+
+1. `apps/GluAI/design.md` — 1601 insertions
+2. `apps/GluAI/screens_updated.md` — 1335 insertions
+3. `apps/GluAI/screens.md` — 470 insertions
+
+_Complexity:_ `git show c89be93 --numstat` → 5178 insertions + 250 deletions across 34 files → **High**. Pushed to **GitHub** `main` (`ycxhub/Glu`). No Vercel project in this repo for this deploy.
