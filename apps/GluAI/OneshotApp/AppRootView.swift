@@ -3,10 +3,10 @@ import Supabase
 
 struct AppRootView: View {
     @Environment(AppState.self) private var appState
+    @Environment(NoopAnalytics.self) private var analytics
     @State private var auth = AuthController()
     @State private var api = APIClient()
     @State private var subs = RevenueCatSubscriptionService()
-    @State private var analytics = NoopAnalytics()
     @State private var mealStore = MealLogStore()
     @State private var supabaseClient: SupabaseClient? = APIConfig.makeSupabaseClient()
 
@@ -20,6 +20,7 @@ struct AppRootView: View {
                     AuthView(
                         auth: auth,
                         supabase: supabaseClient,
+                        analytics: analytics,
                         onComplete: {
                             Task { await completeSignInFlow() }
                         }

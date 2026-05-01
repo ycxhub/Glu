@@ -23,19 +23,35 @@ struct PaywallView: View {
     var body: some View {
         Group {
             if useRevenueCatUI {
-                RevenueCatUI.PaywallView(displayCloseButton: true)
-                    .onPurchaseCompleted { customerInfo in
-                        handleCustomerInfo(customerInfo, source: "purchase")
+                VStack(spacing: 0) {
+                    RevenueCatUI.PaywallView(displayCloseButton: true)
+                        .onPurchaseCompleted { customerInfo in
+                            handleCustomerInfo(customerInfo, source: "purchase")
+                        }
+                        .onRestoreCompleted { customerInfo in
+                            handleCustomerInfo(customerInfo, source: "restore")
+                        }
+                        .onPurchaseFailure { error in
+                            err = error.localizedDescription
+                        }
+                        .onRequestedDismissal {
+                            dismissIntoFreeTier(source: "close")
+                        }
+
+                    Button("Try 5 meals first") {
+                        dismissIntoFreeTier(source: "try_free")
                     }
-                    .onRestoreCompleted { customerInfo in
-                        handleCustomerInfo(customerInfo, source: "restore")
-                    }
-                    .onPurchaseFailure { error in
-                        err = error.localizedDescription
-                    }
-                    .onRequestedDismissal {
-                        Task { await dismissPaywallSignedOut() }
-                    }
+                    .font(AppTheme.Typography.subhead.weight(.medium))
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 24)
+                    .frame(maxWidth: .infinity)
+
+                    Link("Terms of Use", destination: URL(string: "https://example.com/terms")!)
+                        .font(AppTheme.Typography.caption)
+                    Link("Privacy Policy", destination: URL(string: "https://example.com/privacy")!)
+                        .font(AppTheme.Typography.caption)
+                    Spacer().frame(height: 8)
+                }
             } else {
                 offlineDevPaywall
             }
@@ -47,7 +63,7 @@ struct PaywallView: View {
                     .foregroundStyle(AppTheme.error)
                     .padding()
                     .frame(maxWidth: .infinity)
-                    .background(.ultraThinMaterial)
+                    .background(AppTheme.cardElevated)
             }
         }
         .onAppear {
@@ -78,21 +94,19 @@ struct PaywallView: View {
         }
     }
 
-    /// Close on RC paywall — align with previous UX: leave funnel via sign-out.
-    private func dismissPaywallSignedOut() async {
-        analytics.track("paywall_dismissed", properties: ["via": "close"])
-        await sub.logOut()
-        await auth.signOutFromSupabase()
-        appState.signOutUser()
+    /// PRD: honest dismiss — enter **free mode** with 5 analyses (no silent sign-out).
+    private func dismissIntoFreeTier(source: String) {
+        analytics.track("paywall_dismissed", properties: ["via": source])
+        appState.enterFreeTierQuota(5, staffRole: auth.staffRole, subscriptionAllowsAccess: sub.isPremium)
     }
 
     /// Minimal fallback when `REVENUECAT_API_KEY` is missing (Simulator / CI).
     private var offlineDevPaywall: some View {
         ScrollView {
             VStack(spacing: 20) {
-                Text("RevenueCat API key missing")
+                Text("Your spike-smart plan is ready")
                     .font(AppTheme.Typography.title)
-                Text("Add REVENUECAT_API_KEY to AppSecrets.plist. entitlement: \(APIConfig.revenueCatEntitlementId)")
+                Text("Start Glu Gold for unlimited meal analysis — or try 5 meals first.")
                     .font(AppTheme.Typography.subhead)
                     .foregroundStyle(AppTheme.secondaryLabel)
                     .multilineTextAlignment(.center)
@@ -105,6 +119,11 @@ struct PaywallView: View {
                 }
                 .buttonStyle(PrimaryButtonStyle())
 
+                Button("Try 5 meals first") {
+                    dismissIntoFreeTier(source: "try_free_dev")
+                }
+                .font(AppTheme.Typography.subhead)
+
                 Button("Restore purchases") {
                     isRestoring = true
                     Task {
@@ -116,7 +135,12 @@ struct PaywallView: View {
                 .disabled(isRestoring)
 
                 Button("Sign out") {
-                    Task { await dismissPaywallSignedOut() }
+                    Task {
+                        analytics.track("paywall_dismissed", properties: ["via": "sign_out"])
+                        await sub.logOut()
+                        await auth.signOutFromSupabase()
+                        appState.signOutUser()
+                    }
                 }
                 .font(AppTheme.Typography.footnote)
                 .foregroundStyle(AppTheme.secondaryLabel)

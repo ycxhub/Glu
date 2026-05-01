@@ -88,9 +88,7 @@ enum APIConfig {
             let key = supabaseAnonKey,
             !key.isEmpty
         else { return nil }
-        // Opt into forthcoming default: emit stored session as `.initialSession` before refresh (see supabase-swift PR #822).
-        let options = SupabaseClientOptions(auth: .init(emitLocalSessionAsInitialSession: true))
-        return SupabaseClient(supabaseURL: url, supabaseKey: key, options: options)
+        return SupabaseClient(supabaseURL: url, supabaseKey: key)
     }
 }
 
@@ -111,6 +109,37 @@ enum MealAnalyzeError: LocalizedError {
         case .decode:
             return "Could not read the analysis response."
         }
+    }
+}
+
+/// Calm, PRD-aligned copy for meal analysis failures (`screens_updated.md` §19). Prefer over `localizedDescription` in UI.
+enum GluMealAnalysisUserCopy {
+    static let analysisFailed = "We couldn’t analyze this photo. Try a clearer image or choose another one."
+    static let connectionFailed = "We couldn’t reach Glu right now. Check your connection and try again."
+    static let lowConfidenceEstimate = "I’m not fully sure about this estimate. You can adjust it before saving."
+    static let noFoodDetected = "I couldn’t clearly identify the meal. Try another angle with the food centered."
+
+    static func message(for error: Error) -> String {
+        if let urlErr = error as? URLError {
+            switch urlErr.code {
+            case .notConnectedToInternet, .networkConnectionLost, .cannotConnectToHost,
+                 .cannotFindHost, .timedOut, .dnsLookupFailed, .internationalRoamingOff,
+                 .dataNotAllowed:
+                return connectionFailed
+            default:
+                break
+            }
+        }
+        if let meal = error as? MealAnalyzeError {
+            switch meal {
+            case .badStatus(let code):
+                if (500 ... 599).contains(code) { return connectionFailed }
+                return analysisFailed
+            case .decode, .noURL:
+                return analysisFailed
+            }
+        }
+        return analysisFailed
     }
 }
 

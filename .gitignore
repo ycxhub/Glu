@@ -11,3 +11,6 @@
 
 # Supabase CLI local cache
 **/.temp/
+
+# Xcode user-specific
+**/xcuserdata/

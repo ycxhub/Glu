@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "glu_ai_icon_dark_1024.png",
+      "filename" : "App Icon Dark.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "glu_ai_icon_default_1024.png",
+      "filename" : "App Icon Dark 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,7 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "glu_ai_icon_tinted_light_1024.png",
+      "filename" : "App Icon White.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

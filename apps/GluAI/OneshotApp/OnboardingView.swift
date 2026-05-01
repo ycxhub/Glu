@@ -1,20 +1,31 @@
 import SwiftUI
+import UserNotifications
 
 enum GluOnboardingPlan {
-    /// Plan tier from `prd-glu-ai/onboarding.md` screen 19.
+    static let noneOfTheseLabel = "None of these"
+
+    /// Tier labels: **Gentle** / **Balanced** / **Focused** only (`design.md` §10).
     static func tier(responses: [String: [String]]) -> String {
         let strict = responses["strictness"]?.first ?? ""
-        if strict.contains("More direct") || strict.contains("direct") {
-            return "Max awareness"
+        if strict.localizedCaseInsensitiveContains("Gentle") {
+            return "Gentle"
+        }
+        if strict.localizedCaseInsensitiveContains("More direct") || strict.localizedCaseInsensitiveContains("direct") {
+            return "Focused"
         }
         let dm = responses["dm_type"]?.first ?? ""
         if dm == "Type 1" {
-            return "Careful"
+            return "Focused"
+        }
+        let carbThink = responses["carb_think"]?.first ?? ""
+        if carbThink == "Always" || carbThink == "Most meals" {
+            return "Focused"
         }
         return "Balanced"
     }
 
     static func bullets(responses: [String: [String]]) -> [String] {
+        let tier = tier(responses: responses)
         let tricky: String
         if let arr = responses["food_focus"], !arr.isEmpty {
             tricky = arr.joined(separator: ", ")
@@ -22,8 +33,8 @@ enum GluOnboardingPlan {
             tricky = "your focus areas"
         }
         return [
-            "Photo-log one meal today you usually find tricky — you picked \(tricky).",
-            "In every estimate, glance at fiber and added sugar — not just carbs.",
+            "Your starting tone is \(tier) — photo-log one meal today you usually find tricky (you noted \(tricky)).",
+            "In every estimate, glance at fiber and added sugar — not just total carbs.",
             "Bring questions to your clinician; Glu AI is educational, not a prescription.",
         ]
     }
@@ -31,30 +42,63 @@ enum GluOnboardingPlan {
 
 struct OnboardingView: View {
     @Environment(AppState.self) private var appState
+    @Environment(NoopAnalytics.self) private var analytics
     @State private var vm = OnboardingViewModel()
+    @State private var didTrackStarted = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            if let step = vm.current {
-                OnboardingStepContent(
-                    step: step,
-                    vm: vm,
-                    onSelectSingle: { choice in
-                        vm.record(single: choice, stepId: step.id)
-                    },
-                    onSelectMulti: { set in
-                        vm.record(multi: set, stepId: step.id)
-                    },
-                    onPrimary: { handlePrimary(step) },
-                    onCalculatingComplete: { handleCalculating() }
-                )
-            } else {
-                Text("No steps").foregroundStyle(AppTheme.secondaryLabel)
+        NavigationStack {
+            VStack(alignment: .leading, spacing: 0) {
+                if !vm.steps.isEmpty {
+                    ProgressView(value: Double(vm.index + 1), total: Double(vm.steps.count))
+                        .tint(AppTheme.brand)
+                        .padding(.horizontal, 24)
+                        .padding(.top, 8)
+                    Text("Step \(vm.index + 1) of \(vm.steps.count)")
+                        .font(AppTheme.Typography.caption)
+                        .foregroundStyle(AppTheme.secondaryLabel)
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 4)
+                }
+
+                if let step = vm.current {
+                    OnboardingStepContent(
+                        step: step,
+                        vm: vm,
+                        onSelectSingle: { choice in
+                            vm.record(single: choice, stepId: step.id)
+                        },
+                        onSelectMulti: { set in
+                            vm.record(multi: set, stepId: step.id)
+                        },
+                        onPrimary: { handlePrimary(step) },
+                        onSkipNotifications: { advanceAfterNotificationsSkipped() },
+                        onCalculatingComplete: { handleCalculating() }
+                    )
+                } else {
+                    Text("No steps").foregroundStyle(AppTheme.secondaryLabel)
+                }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    if vm.index > 0, vm.current?.kind != .calculating {
+                        Button("Back") {
+                            vm.goBack()
+                        }
+                        .accessibilityLabel("Back to previous question")
+                    }
+                }
             }
         }
         .tint(AppTheme.brand)
         .onChange(of: vm.index) { _, v in
             appState.saveOnboardingIndex(v)
+        }
+        .onAppear {
+            if !didTrackStarted {
+                didTrackStarted = true
+                analytics.track("onboarding_started", properties: ["steps": "\(vm.steps.count)"])
+            }
         }
     }
 
@@ -62,12 +106,20 @@ struct OnboardingView: View {
         vm.advance()
     }
 
+    private func advanceAfterNotificationsSkipped() {
+        if vm.current?.kind == .notificationPriming {
+            vm.advance()
+        }
+    }
+
     private func handlePrimary(_ step: OnboardingStepDefinition) {
         if step.kind == .planReveal {
+            analytics.track("onboarding_completed", properties: ["tier": GluOnboardingPlan.tier(responses: vm.responses)])
             appState.setOnboardingCompleted()
             return
         }
         if vm.isLast {
+            analytics.track("onboarding_completed", properties: nil)
             appState.setOnboardingCompleted()
         } else {
             vm.advance()
@@ -81,10 +133,20 @@ private struct OnboardingStepContent: View {
     var onSelectSingle: (String) -> Void
     var onSelectMulti: ([String]) -> Void
     var onPrimary: () -> Void
+    var onSkipNotifications: () -> Void
     var onCalculatingComplete: () -> Void
+
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var singleSelection: String?
     @State private var multi: Set<String> = []
+    @State private var calculatingLineIndex = 0
+
+    private let calculatingLines = [
+        "Balancing your goals…",
+        "Pairing tips with your meal style…",
+        "Preparing your starting plan…",
+    ]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
@@ -119,9 +181,13 @@ private struct OnboardingStepContent: View {
             case .multiChoice:
                 if let opts = step.options {
                     ForEach(opts, id: \.self) { o in
+                        let exclusiveNone = o == GluOnboardingPlan.noneOfTheseLabel
                         let sel = multi.contains(o)
                         row(title: o, selected: sel) {
-                            if sel { multi.remove(o) } else { multi.insert(o) }
+                            toggleMulti(
+                                option: o,
+                                exclusiveNoneOption: exclusiveNone
+                            )
                             onSelectMulti(Array(multi))
                         }
                     }
@@ -135,24 +201,28 @@ private struct OnboardingStepContent: View {
                     .overlay(alignment: .leading) {
                         VStack(alignment: .leading, spacing: 4) {
                             Text("Glu AI")
-                                .font(.caption2.weight(.semibold))
+                                .font(.caption.weight(.semibold))
                                 .foregroundStyle(AppTheme.secondaryLabel)
-                            Text("Alex, quick lunch log? 📸")
+                            Text("Quick lunch log? 📸")
                                 .font(AppTheme.Typography.subhead)
                         }
                         .padding(.horizontal, 16)
                     }
-                Button("Maybe later") {}
-                    .font(AppTheme.Typography.caption)
-                    .foregroundStyle(AppTheme.secondaryLabel)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                Button("Maybe later") {
+                    onSkipNotifications()
+                }
+                .font(AppTheme.Typography.subhead)
+                .foregroundStyle(AppTheme.brand)
+                .frame(maxWidth: .infinity, alignment: .leading)
             case .calculating:
                 ProgressView()
                     .scaleEffect(1.4)
                     .tint(AppTheme.brand)
-                Text("Balancing your goals…\nPairing tips with your meal style…")
+                Text(calculatingLines[calculatingLineIndex % calculatingLines.count])
                     .font(AppTheme.Typography.subhead)
                     .foregroundStyle(AppTheme.secondaryLabel)
+                    .multilineTextAlignment(.leading)
+                    .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: calculatingLineIndex)
             case .planReveal:
                 Text(GluOnboardingPlan.tier(responses: vm.responses))
                     .font(AppTheme.Typography.display)
@@ -173,10 +243,22 @@ private struct OnboardingStepContent: View {
 
             if step.kind == .calculating {
                 EmptyView()
+            } else if step.kind == .notificationPriming {
+                Button(step.cta) {
+                    requestNotificationPermissionThenContinue()
+                }
+                .buttonStyle(PrimaryButtonStyle())
             } else {
-                Button(step.cta) { onPrimary() }
-                    .buttonStyle(PrimaryButtonStyle())
-                    .disabled(!canContinue)
+                Button {
+                    if step.kind == .multiChoice {
+                        onSelectMulti(Array(multi))
+                    }
+                    onPrimary()
+                } label: {
+                    Text(step.cta)
+                }
+                .buttonStyle(PrimaryButtonStyle())
+                .disabled(!canContinue)
             }
         }
         .padding(24)
@@ -187,15 +269,27 @@ private struct OnboardingStepContent: View {
             if let arr = vm.responses[step.id], step.kind == .multiChoice {
                 multi = Set(arr)
             }
+            calculatingLineIndex = 0
             #if DEBUG
             print("onboarding_screen:", step.id, vm.index)
             #endif
         }
         .task(id: "\(step.id)-\(vm.index)") {
             guard step.kind == .calculating else { return }
+            let lineTask = Task {
+                while !Task.isCancelled {
+                    try? await Task.sleep(nanoseconds: 1_800_000_000)
+                    await MainActor.run { calculatingLineIndex += 1 }
+                }
+            }
             try? await Task.sleep(for: .seconds(4.5))
+            lineTask.cancel()
             onCalculatingComplete()
         }
+    }
+
+    private var multiAllowsEmpty: Bool {
+        step.allowEmptySelection == true
     }
 
     private var canContinue: Bool {
@@ -205,7 +299,43 @@ private struct OnboardingStepContent: View {
         case .singleChoice:
             return singleSelection != nil
         case .multiChoice:
+            if multiAllowsEmpty { return true }
             return !multi.isEmpty
+        }
+    }
+
+    private func toggleMulti(option o: String, exclusiveNoneOption: Bool) {
+        if exclusiveNoneOption {
+            if multi.contains(o) {
+                multi.remove(o)
+            } else {
+                multi = [GluOnboardingPlan.noneOfTheseLabel]
+            }
+            return
+        }
+        if multi.contains(GluOnboardingPlan.noneOfTheseLabel) {
+            multi.remove(GluOnboardingPlan.noneOfTheseLabel)
+        }
+        if multi.contains(o) {
+            multi.remove(o)
+        } else {
+            multi.insert(o)
+        }
+    }
+
+    private func requestNotificationPermissionThenContinue() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            DispatchQueue.main.async {
+                if settings.authorizationStatus == .notDetermined {
+                    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { _, _ in
+                        DispatchQueue.main.async {
+                            onPrimary()
+                        }
+                    }
+                } else {
+                    onPrimary()
+                }
+            }
         }
     }
 

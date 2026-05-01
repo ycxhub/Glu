@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-/// App phase: onboard → auth → paywall → main (`prd-glu-ai/auth.md` + `paywall.md`).
+/// App phase: onboard → auth → paywall → main (`prd-glu-ai-redesign`).
 @Observable
 final class AppState {
     enum Phase: Equatable {
@@ -14,7 +14,7 @@ final class AppState {
     var phase: Phase
     /// Used when `phase == .main` (`TabView` selection).
     var selectedMainTab: Int = 0
-    /// Legacy cache for funnel / no-RevenueCat builds; prefer subscription service when wired.
+    /// Subscriber / trial / staff — **not** the same as “chose free tier”.
     var isPremium: Bool
     var sessionUserId: String?
     var onboardingProgressIndex: Int
@@ -39,16 +39,68 @@ final class AppState {
             self.phase = .onboarding
         } else if uid == nil {
             self.phase = .auth
-        } else if !premium {
-            self.phase = .paywall
         } else {
-            self.phase = .main
+            let chose = userDefaults.bool(forKey: Keys.choseFreeTier)
+            let left = userDefaults.integer(forKey: Keys.freeAnalyses)
+            let canMain = premium || (chose && left > 0)
+            self.phase = canMain ? .main : .paywall
         }
+    }
+
+    // MARK: - Free tier (PRD: 5 analyses)
+
+    var choseFreeTier: Bool {
+        userDefaults.bool(forKey: Keys.choseFreeTier)
+    }
+
+    var freeMealAnalysesRemaining: Int {
+        userDefaults.integer(forKey: Keys.freeAnalyses)
+    }
+
+    /// After paywall dismiss — labeled “Try 5 meals first”.
+    func enterFreeTierQuota(_ count: Int = 5, staffRole: StaffRole?, subscriptionAllowsAccess: Bool) {
+        userDefaults.set(true, forKey: Keys.choseFreeTier)
+        userDefaults.set(count, forKey: Keys.freeAnalyses)
+        applyAccessRouting(
+            onboardingCompleted: isOnboardingCompleted,
+            signedIn: sessionUserId != nil,
+            staffRole: staffRole,
+            subscriptionAllowsAccess: subscriptionAllowsAccess
+        )
+    }
+
+    /// After a successful AI analysis. Does **not** change phase mid-session (user may finish saving the 5th meal).
+    func recordSuccessfulFreeTierAnalysis(staffRole: StaffRole?, subscriptionAllowsAccess: Bool) {
+        guard !subscriptionAllowsAccess else { return }
+        if let staffRole, staffRole == .admin || staffRole == .developer { return }
+        guard userDefaults.bool(forKey: Keys.choseFreeTier) else { return }
+        var r = userDefaults.integer(forKey: Keys.freeAnalyses)
+        guard r > 0 else { return }
+        r -= 1
+        userDefaults.set(r, forKey: Keys.freeAnalyses)
+    }
+
+    /// Call when user attempts a new analysis with **0** credits (e.g. reopen Log) or on cold launch via `applyAccessRouting`.
+    func refreshPhaseForAccess(staffRole: StaffRole?, subscriptionAllowsAccess: Bool) {
+        applyAccessRouting(
+            onboardingCompleted: isOnboardingCompleted,
+            signedIn: sessionUserId != nil,
+            staffRole: staffRole,
+            subscriptionAllowsAccess: subscriptionAllowsAccess
+        )
+    }
+
+    func canStartNewMealAnalysis(staffRole: StaffRole?, subscriptionAllowsAccess: Bool) -> Bool {
+        AccessEvaluator.canUseMainApp(
+            staffRole: staffRole,
+            subscriptionAllowsAccess: subscriptionAllowsAccess,
+            choseFreeTier: userDefaults.bool(forKey: Keys.choseFreeTier),
+            freeMealAnalysesRemaining: userDefaults.integer(forKey: Keys.freeAnalyses)
+        )
     }
 
     // MARK: - Routing
 
-    /// Single place to align root phase with onboarding, auth session, and paywall rules.
     func refreshRouting(
         onboardingCompleted: Bool,
         isSignedIn: Bool,
@@ -74,7 +126,7 @@ final class AppState {
         refreshRouting(
             onboardingCompleted: true,
             isSignedIn: sessionUserId != nil,
-            canUseMainApp: isPremium
+            canUseMainApp: isPremium || (choseFreeTier && freeMealAnalysesRemaining > 0)
         )
     }
 
@@ -84,12 +136,14 @@ final class AppState {
         refreshRouting(
             onboardingCompleted: userDefaults.bool(forKey: Keys.onboardingDone),
             isSignedIn: true,
-            canUseMainApp: isPremium
+            canUseMainApp: isPremium || (choseFreeTier && freeMealAnalysesRemaining > 0)
         )
     }
 
-    /// Call after RevenueCat / StoreKit success; until then `LocalSubscriptionService` + dev paywall use this.
+    /// RevenueCat / StoreKit success — clears free-tier flags for a clean subscriber state.
     func setPremiumUnlocked() {
+        userDefaults.set(false, forKey: Keys.choseFreeTier)
+        userDefaults.set(0, forKey: Keys.freeAnalyses)
         userDefaults.set(true, forKey: Keys.premium)
         isPremium = true
         refreshRouting(
@@ -105,13 +159,18 @@ final class AppState {
         staffRole: StaffRole?,
         subscriptionAllowsAccess: Bool
     ) {
-        let canMain = AccessEvaluator.canUseMainApp(
-            staffRole: staffRole,
-            subscriptionAllowsAccess: subscriptionAllowsAccess
-        )
         let staffUnlocks = staffRole == .admin || staffRole == .developer
         isPremium = subscriptionAllowsAccess || staffUnlocks
         userDefaults.set(subscriptionAllowsAccess || staffUnlocks, forKey: Keys.premium)
+
+        let chose = userDefaults.bool(forKey: Keys.choseFreeTier)
+        let left = userDefaults.integer(forKey: Keys.freeAnalyses)
+        let canMain = AccessEvaluator.canUseMainApp(
+            staffRole: staffRole,
+            subscriptionAllowsAccess: subscriptionAllowsAccess,
+            choseFreeTier: chose,
+            freeMealAnalysesRemaining: left
+        )
         refreshRouting(
             onboardingCompleted: onboardingCompleted,
             isSignedIn: signedIn,
@@ -127,6 +186,8 @@ final class AppState {
     func signOutUser() {
         userDefaults.removeObject(forKey: Keys.userId)
         userDefaults.set(false, forKey: Keys.premium)
+        userDefaults.set(false, forKey: Keys.choseFreeTier)
+        userDefaults.removeObject(forKey: Keys.freeAnalyses)
         sessionUserId = nil
         isPremium = false
         phase = .auth
@@ -138,6 +199,8 @@ final class AppState {
         userDefaults.set(0, forKey: Keys.onboardingIndex)
         userDefaults.removeObject(forKey: Keys.userId)
         userDefaults.set(false, forKey: Keys.premium)
+        userDefaults.set(false, forKey: Keys.choseFreeTier)
+        userDefaults.removeObject(forKey: Keys.freeAnalyses)
         sessionUserId = nil
         isPremium = false
         onboardingProgressIndex = 0
@@ -165,5 +228,7 @@ final class AppState {
         static let userId = "gluai.userId"
         static let onboardingDone = "gluai.onboardingDone"
         static let onboardingIndex = "gluai.onboardingIndex"
+        static let choseFreeTier = "gluai.choseFreeTier"
+        static let freeAnalyses = "gluai.freeAnalysesRemaining"
     }
 }

@@ -22,6 +22,15 @@ final class RevenueCatSubscriptionService: SubscriptionControlling {
         }
         #if DEBUG
         Purchases.logLevel = .debug
+        if !key.hasPrefix("appl_") {
+            print(
+                """
+                [RevenueCat] REVENUECAT_API_KEY should be the iOS *public* SDK key (prefix appl_). \
+                test_ / goog_ / amzn_ keys cause CONFIGURATION_ERROR (code 23) on iOS when loading products. \
+                Key prefix: \(String(key.prefix(12)))…
+                """
+            )
+        }
         #else
         Purchases.logLevel = .warn
         #endif

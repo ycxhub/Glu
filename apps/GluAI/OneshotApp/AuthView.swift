@@ -7,6 +7,7 @@ import Supabase
 struct AuthView: View {
     @Bindable var auth: AuthController
     var supabase: SupabaseClient?
+    var analytics: NoopAnalytics
     var onComplete: () -> Void
     @State private var err: String?
     @State private var currentNonce: String?
@@ -16,7 +17,7 @@ struct AuthView: View {
             Spacer()
             Text("Save your plan")
                 .font(AppTheme.Typography.title)
-            Text("Sign in with Apple to sync meals across devices. Your session is secured with Supabase.")
+            Text("Sign in with Apple to keep your personalized plan and meal history synced across devices.")
                 .font(AppTheme.Typography.subhead)
                 .foregroundStyle(AppTheme.secondaryLabel)
                 .multilineTextAlignment(.center)
@@ -39,6 +40,7 @@ struct AuthView: View {
             .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
             .padding(.horizontal, 24)
 
+            #if DEBUG
             Button("Continue with Google (wire SDK)") {
                 err = "Add Google Sign-In + Supabase per auth.md"
             }
@@ -49,23 +51,34 @@ struct AuthView: View {
                 err = nil
                 let id = "mock-" + String(UUID().uuidString.prefix(8))
                 auth.setMockSession(userId: id, displayName: "Preview User")
+                analytics.track("auth_completed", properties: ["method": "mock"])
                 onComplete()
             }
             .font(AppTheme.Typography.footnote)
             .foregroundStyle(AppTheme.secondaryLabel)
+            #endif
 
             Spacer()
         }
         .padding()
+        .onAppear {
+            analytics.track("auth_started", properties: nil)
+        }
     }
 
     private func handleAppleResult(_ result: Result<ASAuthorization, Error>) async {
         switch result {
         case .failure(let error):
-            await MainActor.run { err = error.localizedDescription }
+            await MainActor.run {
+                err = error.localizedDescription
+                analytics.track("auth_failed", properties: ["reason": "apple"])
+            }
         case .success(let authorization):
             guard let cred = authorization.credential as? ASAuthorizationAppleIDCredential else {
-                await MainActor.run { err = "Unexpected credential type." }
+                await MainActor.run {
+                    err = "Unexpected credential type."
+                    analytics.track("auth_failed", properties: ["reason": "credential"])
+                }
                 return
             }
             let appleName = [cred.fullName?.givenName, cred.fullName?.familyName]
@@ -74,7 +87,10 @@ struct AuthView: View {
             guard let tokenData = cred.identityToken,
                   let idToken = String(data: tokenData, encoding: .utf8)
             else {
-                await MainActor.run { err = "Missing identity token from Apple." }
+                await MainActor.run {
+                    err = "Missing identity token from Apple."
+                    analytics.track("auth_failed", properties: ["reason": "token"])
+                }
                 return
             }
             guard let client = supabase else {
@@ -84,6 +100,7 @@ struct AuthView: View {
                         displayName: appleName.isEmpty ? nil : appleName
                     )
                     err = "Supabase not configured — using Apple user id locally only."
+                    analytics.track("auth_completed", properties: ["method": "apple_local"])
                     onComplete()
                 }
                 return
@@ -103,11 +120,13 @@ struct AuthView: View {
                         session,
                         preferredDisplayName: appleName.isEmpty ? nil : appleName
                     )
+                    analytics.track("auth_completed", properties: ["method": "apple"])
                     onComplete()
                 }
             } catch {
                 await MainActor.run {
                     err = error.localizedDescription
+                    analytics.track("auth_failed", properties: ["reason": "supabase"])
                 }
             }
         }

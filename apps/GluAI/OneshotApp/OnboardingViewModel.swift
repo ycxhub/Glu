@@ -24,6 +24,11 @@ final class OnboardingViewModel {
 
     var isLast: Bool { index >= steps.count - 1 }
 
+    func goBack() {
+        guard index > 0 else { return }
+        index -= 1
+    }
+
     func advance() {
         guard !isLast else { return }
         index += 1

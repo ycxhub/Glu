@@ -31,9 +31,15 @@ struct SettingsView: View {
                     }
                 }
                 Section("Subscription") {
-                    Text("Glu Gold: \(sub.isPremium ? "Active" : "Inactive")")
+                    Text("Glu Gold: \(appState.isPremium ? "Active" : "Inactive")")
                     if sub.isInTrialPeriod {
                         Text("Trial active").font(AppTheme.Typography.caption).foregroundStyle(AppTheme.secondaryLabel)
+                    }
+                    if appState.choseFreeTier, !appState.isPremium {
+                        Text("Free mode: \(appState.freeMealAnalysesRemaining) meal analyses left")
+                            .font(AppTheme.Typography.footnote)
+                            .foregroundStyle(AppTheme.secondaryLabel)
+                            .accessibilityLabel("Free mode, \(appState.freeMealAnalysesRemaining) meal analyses remaining")
                     }
                     Button("Restore purchases") {
                         Task {
@@ -55,6 +61,21 @@ struct SettingsView: View {
                         }
                     }
                 }
+                Section("Preferences") {
+                    Text("Meal reminders and nudges can be adjusted here in a future update.")
+                        .font(AppTheme.Typography.footnote)
+                        .foregroundStyle(AppTheme.secondaryLabel)
+                }
+                Section("Health context") {
+                    Text("Glu AI provides educational estimates only — not medical advice. Always follow your care team’s plan.")
+                        .font(AppTheme.Typography.footnote)
+                        .foregroundStyle(AppTheme.secondaryLabel)
+                }
+                Section("Legal") {
+                    Link("Terms of Use", destination: URL(string: "https://example.com/terms")!)
+                    Link("Privacy Policy", destination: URL(string: "https://example.com/privacy")!)
+                }
+                #if DEBUG
                 Section("Developer") {
                     Button("Reset onboarding (QA)") {
                         Task {
@@ -65,6 +86,7 @@ struct SettingsView: View {
                     }
                     .font(AppTheme.Typography.footnote)
                 }
+                #endif
                 Section {
                     Button("Sign out") {
                         Task {

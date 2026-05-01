@@ -8,6 +8,8 @@ struct OnboardingStepDefinition: Identifiable, Codable, Hashable {
     var subtitle: String?
     var options: [String]?
     var cta: String
+    /// When true, multi-select **Continue** works with zero selections (optional screens per `design.md` §10).
+    var allowEmptySelection: Bool?
 
     enum Kind: String, Codable {
         case welcome
@@ -44,7 +46,8 @@ enum OnboardingStepsLoader {
             title: "Welcome to Oneshot",
             subtitle: "Your personal companion for this template.",
             options: nil,
-            cta: "Get Started"
+            cta: "Get Started",
+            allowEmptySelection: nil
         ),
         .init(
             id: "goal",
@@ -52,7 +55,8 @@ enum OnboardingStepsLoader {
             title: "What is your main goal?",
             subtitle: nil,
             options: ["Lose weight", "Maintain", "Build habits"],
-            cta: "Continue"
+            cta: "Continue",
+            allowEmptySelection: nil
         ),
         .init(
             id: "notify",
@@ -60,7 +64,8 @@ enum OnboardingStepsLoader {
             title: "Stay on track",
             subtitle: "We’ll nudge you at the right time.",
             options: nil,
-            cta: "Continue"
+            cta: "Continue",
+            allowEmptySelection: nil
         ),
         .init(
             id: "calculating",
@@ -68,7 +73,8 @@ enum OnboardingStepsLoader {
             title: "Creating your plan...",
             subtitle: nil,
             options: nil,
-            cta: "Continue"
+            cta: "Continue",
+            allowEmptySelection: nil
         ),
         .init(
             id: "reveal",
@@ -76,7 +82,8 @@ enum OnboardingStepsLoader {
             title: "Your plan is ready",
             subtitle: "A preview number for the template.",
             options: nil,
-            cta: "Save my plan"
+            cta: "Save my plan",
+            allowEmptySelection: nil
         ),
     ]
 }

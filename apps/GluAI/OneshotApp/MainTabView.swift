@@ -17,7 +17,7 @@ struct MainTabView: View {
                 .tabItem { Label("Home", systemImage: "house") }
                 .tag(0)
 
-            CoreActionView(api: api, auth: auth, analytics: analytics, meals: meals)
+            CoreActionView(api: api, auth: auth, subs: subs, analytics: analytics, meals: meals)
                 .tabItem { Label("Log", systemImage: "camera.viewfinder") }
                 .tag(1)
 
@@ -31,8 +31,26 @@ struct MainTabView: View {
         }
         .tint(AppTheme.brand)
         .onAppear {
-            analytics.track("home_viewed", properties: nil)
+            trackMainTab(appState.selectedMainTab)
             Task { await meals.loadRemoteMeals() }
+        }
+        .onChange(of: appState.selectedMainTab) { _, tab in
+            trackMainTab(tab)
+        }
+    }
+
+    private func trackMainTab(_ tab: Int) {
+        switch tab {
+        case 0:
+            analytics.track("home_viewed", properties: nil)
+        case 1:
+            analytics.track("log_viewed", properties: nil)
+        case 2:
+            analytics.track("history_viewed", properties: nil)
+        case 3:
+            analytics.track("settings_viewed", properties: nil)
+        default:
+            break
         }
     }
 }

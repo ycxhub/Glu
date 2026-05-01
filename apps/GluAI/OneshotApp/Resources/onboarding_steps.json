@@ -4,7 +4,7 @@
       "id": "welcome",
       "kind": "welcome",
       "title": "Glu AI",
-      "subtitle": "Photo meals. Smarter carb context — educational only.",
+      "subtitle": "Snap meals. Understand calories, macros, and glucose context — educational only.",
       "options": null,
       "cta": "Get Started"
     },
@@ -13,7 +13,7 @@
       "kind": "singleChoice",
       "title": "What best describes you?",
       "subtitle": null,
-      "options": ["Type 1", "Type 2", "Prediabetes", "Gestational", "Not sure / still learning"],
+      "options": ["Type 1", "Type 2", "Prediabetes", "Gestational", "Not sure / still learning", "General glucose awareness"],
       "cta": "Continue"
     },
     {
@@ -36,7 +36,7 @@
       "id": "barriers",
       "kind": "multiChoice",
       "title": "What usually gets in the way?",
-      "subtitle": "Select all that apply.",
+      "subtitle": "Select all that apply — or skip if nothing fits.",
       "options": [
         "Too time-consuming",
         "Hard to guess carbs",
@@ -45,13 +45,14 @@
         "Don't trust estimates",
         "Not sure what to aim for"
       ],
-      "cta": "Continue"
+      "cta": "Continue",
+      "allowEmptySelection": true
     },
     {
       "id": "promise",
       "kind": "info",
-      "title": "Most members build a steadier logging habit in 3 weeks",
-      "subtitle": "Self-reported consistency — not a medical outcome claim.",
+      "title": "Small logs compound",
+      "subtitle": "Glu is designed to help you build a steadier logging habit without making tracking feel heavy — educational only, not medical advice.",
       "options": null,
       "cta": "Continue"
     },
@@ -59,7 +60,7 @@
       "id": "goals",
       "kind": "multiChoice",
       "title": "What are you hoping Glu AI helps with?",
-      "subtitle": null,
+      "subtitle": "Optional — pick what resonates.",
       "options": [
         "Fewer sharp swings after meals (how I feel)",
         "Better carb awareness",
@@ -67,7 +68,8 @@
         "Weight trend support",
         "Notes for my care team"
       ],
-      "cta": "Continue"
+      "cta": "Continue",
+      "allowEmptySelection": true
     },
     {
       "id": "carb_comfort",
@@ -97,15 +99,16 @@
       "id": "food_focus",
       "kind": "multiChoice",
       "title": "Where do you want extra awareness?",
-      "subtitle": null,
+      "subtitle": "Optional — choose any that apply.",
       "options": ["Restaurant meals", "Takeout", "Home cooking", "Packaged snacks", "Sweets / desserts", "Drinks"],
-      "cta": "Continue"
+      "cta": "Continue",
+      "allowEmptySelection": true
     },
     {
       "id": "comorbid",
       "kind": "multiChoice",
-      "title": "Anything else you're comfortable sharing? (Optional)",
-      "subtitle": "Select any — or choose “None of these”.",
+      "title": "Anything else you're comfortable sharing?",
+      "subtitle": "Optional — select any, choose “None of these”, or continue without selecting.",
       "options": [
         "None of these",
         "High blood pressure",
@@ -113,13 +116,14 @@
         "Celiac / gluten-free",
         "Vegetarian / vegan"
       ],
-      "cta": "Continue"
+      "cta": "Continue",
+      "allowEmptySelection": true
     },
     {
       "id": "social_proof",
       "kind": "info",
-      "title": "People use Glu AI to log faster and think clearer about meals",
-      "subtitle": "Replace with real quotes after launch — this is placeholder social proof.",
+      "title": "Glu helps people log faster and think clearer",
+      "subtitle": "Photo-first estimates and spike-risk context — always educational, never a prescription.",
       "options": null,
       "cta": "Continue"
     },
@@ -135,14 +139,15 @@
       "id": "aspirations",
       "kind": "multiChoice",
       "title": "In the next month, you'd love to…",
-      "subtitle": null,
+      "subtitle": "Optional — pick what fits.",
       "options": [
         "Feel more in control at meals",
         "Spend less time logging",
         "See my patterns clearly",
         "Bring better notes to appointments"
       ],
-      "cta": "Continue"
+      "cta": "Continue",
+      "allowEmptySelection": true
     },
     {
       "id": "notify_prime",

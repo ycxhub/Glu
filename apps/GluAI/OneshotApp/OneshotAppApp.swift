@@ -4,6 +4,7 @@ import SwiftUI
 @main
 struct OneshotAppApp: App {
     @State private var appState = AppState()
+    @State private var analytics = NoopAnalytics()
 
     init() {
         RevenueCatSubscriptionService.configurePurchasesAtAppLaunch()
@@ -13,6 +14,7 @@ struct OneshotAppApp: App {
         WindowGroup {
             AppRootView()
                 .environment(appState)
+                .environment(analytics)
         }
     }
 }

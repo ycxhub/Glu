@@ -8,15 +8,22 @@ enum StaffRole: String, Sendable {
 }
 
 enum AccessEvaluator {
-    /// Main app (tabs) is reachable for subscribers/trial, or staff admin/developer.
-    static func canUseMainApp(staffRole: StaffRole?, subscriptionAllowsAccess: Bool) -> Bool {
+    /// Main app (tabs) for subscribers/trial, staff admin/developer, or **free tier** with remaining analyses.
+    static func canUseMainApp(
+        staffRole: StaffRole?,
+        subscriptionAllowsAccess: Bool,
+        choseFreeTier: Bool,
+        freeMealAnalysesRemaining: Int
+    ) -> Bool {
         if let staffRole {
             switch staffRole {
             case .admin, .developer:
                 return true
             }
         }
-        return subscriptionAllowsAccess
+        if subscriptionAllowsAccess { return true }
+        if choseFreeTier && freeMealAnalysesRemaining > 0 { return true }
+        return false
     }
 }
 

@@ -4,21 +4,22 @@ import Supabase
 import UIKit
 
 struct MealLineItem: Codable, Equatable, Identifiable {
-    let name: String
-    let portionGuess: String
-    let calories: Int
-    let carbsG: Double
-
-    var id: String { name + portionGuess }
+    var id: UUID
+    var name: String
+    var portionGuess: String
+    var calories: Int
+    var carbsG: Double
 
     enum CodingKeys: String, CodingKey {
+        case id
         case name
         case portionGuess = "portion_guess"
         case calories
         case carbsG = "carbs_g"
     }
 
-    init(name: String, portionGuess: String, calories: Int, carbsG: Double) {
+    init(id: UUID = UUID(), name: String, portionGuess: String, calories: Int, carbsG: Double) {
+        self.id = id
         self.name = name
         self.portionGuess = portionGuess
         self.calories = calories
@@ -27,6 +28,7 @@ struct MealLineItem: Codable, Equatable, Identifiable {
 
     init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decodeIfPresent(UUID.self, forKey: .id) ?? UUID()
         name = try c.decode(String.self, forKey: .name)
         portionGuess = try c.decodeIfPresent(String.self, forKey: .portionGuess) ?? ""
         calories = try c.decodeIfPresent(Int.self, forKey: .calories) ?? 0
@@ -35,6 +37,7 @@ struct MealLineItem: Codable, Equatable, Identifiable {
 
     func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
         try c.encode(name, forKey: .name)
         try c.encode(portionGuess, forKey: .portionGuess)
         try c.encode(calories, forKey: .calories)
@@ -49,6 +52,22 @@ struct MealTotals: Codable, Equatable {
     let sugarG: Double?
     let proteinG: Double?
     let fatG: Double?
+
+    init(
+        calories: Int?,
+        carbsG: Double?,
+        fiberG: Double?,
+        sugarG: Double?,
+        proteinG: Double?,
+        fatG: Double?
+    ) {
+        self.calories = calories
+        self.carbsG = carbsG
+        self.fiberG = fiberG
+        self.sugarG = sugarG
+        self.proteinG = proteinG
+        self.fatG = fatG
+    }
 
     enum CodingKeys: String, CodingKey {
         case calories
@@ -130,6 +149,28 @@ struct MealAIOutput: Codable, Equatable {
             disclaimer: "Educational estimate only. Not medical advice.",
             confidence: 0.62
         )
+    }
+}
+
+extension MealAIOutput {
+    /// Rebuilds `totals` from line items; scales fiber/sugar/protein/fat when prior totals existed (ratio vs previous calorie total).
+    mutating func recomputeTotalsFromLineItems() {
+        let cal = items.reduce(0) { $0 + $1.calories }
+        let carbs = items.reduce(0.0) { $0 + $1.carbsG }
+        if let t = totals {
+            let oldC = max(t.calories ?? cal, 1)
+            let ratio = Double(cal) / Double(oldC)
+            totals = MealTotals(
+                calories: cal,
+                carbsG: carbs,
+                fiberG: (t.fiberG ?? 0) * ratio,
+                sugarG: (t.sugarG ?? 0) * ratio,
+                proteinG: (t.proteinG ?? 0) * ratio,
+                fatG: (t.fatG ?? 0) * ratio
+            )
+        } else {
+            totals = MealTotals(calories: cal, carbsG: carbs, fiberG: 0, sugarG: 0, proteinG: 0, fatG: 0)
+        }
     }
 }
 
@@ -218,6 +259,29 @@ final class MealLogStore {
         } catch {
             #if DEBUG
             print("MealLogStore.persistInsert:", error)
+            #endif
+        }
+    }
+
+    func replaceEntry(_ entry: MealEntry) async {
+        if let i = meals.firstIndex(where: { $0.id == entry.id }) {
+            meals[i] = entry
+        }
+        await persistUpdateOutput(id: entry.id, output: entry.output)
+    }
+
+    private struct MealLogOutputPatch: Encodable {
+        let output: MealAIOutput
+    }
+
+    private func persistUpdateOutput(id: UUID, output: MealAIOutput) async {
+        guard let client = supabase else { return }
+        let patch = MealLogOutputPatch(output: output)
+        do {
+            try await client.from("meal_logs").update(patch).eq("id", value: id.uuidString).execute()
+        } catch {
+            #if DEBUG
+            print("MealLogStore.persistUpdateOutput:", error)
             #endif
         }
     }
