@@ -99,6 +99,21 @@ final class AppState {
         )
     }
 
+    /// Sync free-tier display from server quota (`analyze-meal` → `meal_analysis_quota_status`). Not authoritative for gating until next refresh.
+    func applyMealAnalysisQuotaFromServer(
+        _ quota: MealAnalyzeQuota?,
+        staffRole: StaffRole?,
+        subscriptionAllowsAccess: Bool
+    ) {
+        guard let q = quota, q.ok == true else { return }
+        if let s = staffRole, s == .admin || s == .developer { return }
+        if subscriptionAllowsAccess { return }
+        guard userDefaults.bool(forKey: Keys.choseFreeTier) else { return }
+        guard let rem = q.remainingFree else { return }
+        userDefaults.set(rem, forKey: Keys.freeAnalyses)
+        refreshPhaseForAccess(staffRole: staffRole, subscriptionAllowsAccess: subscriptionAllowsAccess)
+    }
+
     // MARK: - Routing
 
     func refreshRouting(

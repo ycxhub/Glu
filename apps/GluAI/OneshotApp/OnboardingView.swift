@@ -72,6 +72,12 @@ struct OnboardingView: View {
                             vm.record(multi: set, stepId: step.id)
                         },
                         onPrimary: { handlePrimary(step) },
+                        onPlanRevealSecondary: {
+                            analytics.track("onboarding_plan_reveal_secondary", properties: [
+                                "label": step.secondaryCta ?? "",
+                            ])
+                            handlePrimary(step)
+                        },
                         onSkipNotifications: { advanceAfterNotificationsSkipped() },
                         onCalculatingComplete: { handleCalculating() }
                     )
@@ -133,6 +139,7 @@ private struct OnboardingStepContent: View {
     var onSelectSingle: (String) -> Void
     var onSelectMulti: ([String]) -> Void
     var onPrimary: () -> Void
+    var onPlanRevealSecondary: () -> Void
     var onSkipNotifications: () -> Void
     var onCalculatingComplete: () -> Void
 
@@ -266,6 +273,12 @@ private struct OnboardingStepContent: View {
                 }
                 .buttonStyle(PrimaryButtonStyle())
                 .disabled(!canContinue)
+                if step.kind == .planReveal, let sec = step.secondaryCta, !sec.isEmpty {
+                    Button(sec) {
+                        onPlanRevealSecondary()
+                    }
+                    .buttonStyle(LibrarySecondaryButtonStyle())
+                }
             }
         }
         .padding(24)

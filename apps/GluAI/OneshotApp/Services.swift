@@ -58,6 +58,11 @@ enum APIConfig {
             ?? "functions/v1/analyze-meal"
     }
 
+    static var deleteAccountPath: String {
+        (Bundle.main.object(forInfoDictionaryKey: "SUPABASE_DELETE_ACCOUNT_PATH") as? String)
+            ?? "functions/v1/delete-account"
+    }
+
     /// RevenueCat public SDK key (same app). Omit or placeholder to run without StoreKit / dashboard.
     static var revenueCatAPIKey: String? {
         if let k = appSecrets["REVENUECAT_API_KEY"]?.trimmingCharacters(in: .whitespacesAndNewlines), !k.isEmpty { return k }
@@ -104,6 +109,7 @@ enum MealAnalyzeError: LocalizedError {
     case noURL
     case badStatus(Int)
     case decode
+    case quotaExhausted
 
     var errorDescription: String? {
         switch self {
@@ -111,11 +117,16 @@ enum MealAnalyzeError: LocalizedError {
             return "Missing Supabase URL. Check AppSecrets.plist."
         case .badStatus(let code):
             if code == 401 {
-                return "Meal analysis was unauthorized (401). Redeploy the analyze-meal function with verify_jwt disabled for publishable keys, or check your publishable key in AppSecrets."
+                return "Your session expired. Sign in again to continue."
+            }
+            if code == 402 {
+                return "You’ve used your free meal analyses. Subscribe to continue."
             }
             return "Could not analyze meal (HTTP \(code))."
         case .decode:
             return "Could not read the analysis response."
+        case .quotaExhausted:
+            return "You’ve used your free meal analyses. Subscribe to continue."
         }
     }
 }
@@ -140,7 +151,10 @@ enum GluMealAnalysisUserCopy {
         }
         if let meal = error as? MealAnalyzeError {
             switch meal {
+            case .quotaExhausted:
+                return "You’ve used your free meal analyses. Subscribe to continue."
             case .badStatus(let code):
+                if code == 402 { return "You’ve used your free meal analyses. Subscribe to continue." }
                 if (500 ... 599).contains(code) { return connectionFailed }
                 return analysisFailed
             case .decode, .noURL:
@@ -151,6 +165,59 @@ enum GluMealAnalysisUserCopy {
     }
 }
 
+// MARK: - Meal analyze API response
+
+struct MealAnalyzeQuota: Decodable, Equatable {
+    let ok: Bool?
+    let chargedCompleted: Int?
+    let staff: Bool?
+    let gold: Bool?
+    let remainingFree: Int?
+
+    enum CodingKeys: String, CodingKey {
+        case ok
+        case chargedCompleted = "charged_completed"
+        case staff
+        case gold
+        case remainingFree = "remaining_free"
+    }
+}
+
+struct MealAnalyzeResult: Decodable, Equatable {
+    let mealId: UUID?
+    let analysisState: String
+    let charged: Bool
+    let envelope: GluMealEnvelope?
+    let userEstimate: MealAIOutput
+    let quota: MealAnalyzeQuota?
+
+    enum CodingKeys: String, CodingKey {
+        case mealId = "meal_id"
+        case analysisState = "analysis_state"
+        case charged
+        case envelope
+        case userEstimate = "user_estimate"
+        case quota
+    }
+
+    static func mockLocal() -> MealAnalyzeResult {
+        let out = MealAIOutput.mock()
+        return MealAnalyzeResult(
+            mealId: UUID(),
+            analysisState: "ready",
+            charged: false,
+            envelope: GluMealEnvelope.legacy(from: out),
+            userEstimate: out,
+            quota: nil
+        )
+    }
+}
+
+private let mealAnalyzeDecoder: JSONDecoder = {
+    let d = JSONDecoder()
+    return d
+}()
+
 @MainActor
 @Observable
 final class APIClient {
@@ -160,11 +227,16 @@ final class APIClient {
         self.session = session
     }
 
-    /// POST image to Edge Function; falls back to mock when `SUPABASE_URL` unset.
-    func analyzeMeal(imageJPEG: Data, userId: String, accessToken: String?) async throws -> MealAIOutput {
+    /// POST image to Edge Function (JWT + quota ledger). Mock when `SUPABASE_URL` unset.
+    func analyzeMeal(
+        imageJPEG: Data,
+        accessToken: String?,
+        idempotencyKey: String,
+        installId: String
+    ) async throws -> MealAnalyzeResult {
         guard let rawBase = APIConfig.supabaseURL?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) else {
             try await Task.sleep(nanoseconds: 400_000_000)
-            return .mock()
+            return .mockLocal()
         }
         let pathPart = APIConfig.analyzeMealPath.hasPrefix("/")
             ? APIConfig.analyzeMealPath
@@ -179,33 +251,60 @@ final class APIClient {
         if let key = APIConfig.supabaseAnonKey {
             req.setValue(key, forHTTPHeaderField: "apikey")
         }
-        if let t = accessToken {
+        if let t = accessToken, !t.isEmpty {
             req.setValue("Bearer \(t)", forHTTPHeaderField: "Authorization")
         } else if let key = APIConfig.supabaseAnonKey {
-            // Publishable key must match `apikey`; Bearer duplicates it for gateways that expect Authorization (not a JWT).
             req.setValue("Bearer \(key)", forHTTPHeaderField: "Authorization")
         }
         let b64 = imageJPEG.base64EncodedString()
         let body: [String: Any] = [
             "image_base64": b64,
-            "user_id": userId,
+            "idempotency_key": idempotencyKey,
+            "install_id": installId,
         ]
         req.httpBody = try JSONSerialization.data(withJSONObject: body)
 
         let (data, res) = try await session.data(for: req)
         guard let http = res as? HTTPURLResponse else { throw MealAnalyzeError.badStatus(-1) }
+        if http.statusCode == 402 {
+            throw MealAnalyzeError.quotaExhausted
+        }
         guard (200 ..< 300).contains(http.statusCode) else { throw MealAnalyzeError.badStatus(http.statusCode) }
         do {
-            return try JSONDecoder().decode(MealAIOutput.self, from: data)
+            return try mealAnalyzeDecoder.decode(MealAnalyzeResult.self, from: data)
         } catch {
-            // Some functions wrap payload as { "data": { ...schema } }
             if let obj = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
                let inner = obj["data"] as? [String: Any],
                let innerData = try? JSONSerialization.data(withJSONObject: inner) {
-                return try JSONDecoder().decode(MealAIOutput.self, from: innerData)
+                return try mealAnalyzeDecoder.decode(MealAnalyzeResult.self, from: innerData)
             }
             throw MealAnalyzeError.decode
         }
+    }
+
+    /// Deletes the signed-in Supabase user (cascades public data). Requires session JWT.
+    func deleteAccount(accessToken: String) async throws {
+        guard let rawBase = APIConfig.supabaseURL?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) else {
+            throw MealAnalyzeError.noURL
+        }
+        let pathPart = APIConfig.deleteAccountPath.hasPrefix("/")
+            ? APIConfig.deleteAccountPath
+            : "/" + APIConfig.deleteAccountPath
+        guard let functionURL = URL(string: rawBase + pathPart) else {
+            throw MealAnalyzeError.noURL
+        }
+        var req = URLRequest(url: functionURL)
+        req.httpMethod = "POST"
+        req.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        if let key = APIConfig.supabaseAnonKey {
+            req.setValue(key, forHTTPHeaderField: "apikey")
+        }
+        req.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        req.httpBody = try JSONSerialization.data(withJSONObject: ["confirm": true])
+
+        let (_, res) = try await session.data(for: req)
+        guard let http = res as? HTTPURLResponse else { throw MealAnalyzeError.badStatus(-1) }
+        guard (200 ..< 300).contains(http.statusCode) else { throw MealAnalyzeError.badStatus(http.statusCode) }
     }
 }
 
@@ -298,7 +397,17 @@ final class AIGatewayService {
         self.api = api
     }
 
-    func analyzeMealPhoto(jpegData: Data, userId: String, accessToken: String?) async throws -> MealAIOutput {
-        try await api.analyzeMeal(imageJPEG: jpegData, userId: userId, accessToken: accessToken)
+    func analyzeMealPhoto(
+        jpegData: Data,
+        accessToken: String?,
+        idempotencyKey: String,
+        installId: String
+    ) async throws -> MealAnalyzeResult {
+        try await api.analyzeMeal(
+            imageJPEG: jpegData,
+            accessToken: accessToken,
+            idempotencyKey: idempotencyKey,
+            installId: installId
+        )
     }
 }

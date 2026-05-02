@@ -25,7 +25,7 @@ struct MainTabView: View {
                 .tabItem { Label("History", systemImage: "clock") }
                 .tag(2)
 
-            SettingsView(auth: auth, sub: subs)
+            SettingsView(api: api, auth: auth, sub: subs)
                 .tabItem { Label("Settings", systemImage: "gearshape") }
                 .tag(3)
         }

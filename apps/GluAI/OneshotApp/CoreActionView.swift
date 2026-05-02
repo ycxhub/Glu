@@ -5,7 +5,12 @@ import UIKit
 private struct MealEstimateSession: Identifiable {
     let id = UUID()
     var output: MealAIOutput
+    var envelope: GluMealEnvelope?
     let imageData: Data?
+    /// When set, `meal_logs` row already exists on the server (finalize RPC).
+    let serverMealId: UUID?
+    let serverRowExists: Bool
+    let chargedAnalysis: Bool
 }
 
 struct CoreActionView: View {
@@ -138,21 +143,33 @@ struct CoreActionView: View {
                 NavigationStack {
                     GluMealEstimateSheet(
                         snapshot: session.output,
+                        envelope: session.envelope,
                         imageData: session.imageData,
                         onSave: { saved in
+                            let mergedEnv = session.envelope?.updatingUserEstimate(saved)
+                                ?? GluMealEnvelope.legacy(from: saved)
                             let thumb = session.imageData.flatMap { UIImage(data: $0)?.jpegData(compressionQuality: 0.5) }
                             let entry = MealEntry(
-                                id: UUID(),
+                                id: session.serverMealId ?? UUID(),
                                 createdAt: Date(),
                                 thumbnailData: thumb,
-                                output: saved
+                                output: saved,
+                                envelope: mergedEnv
                             )
-                            meals.add(entry)
-                            Task { await meals.persistInsert(entry) }
+                            if session.serverRowExists {
+                                meals.add(entry)
+                                Task { await meals.replaceEntry(entry) }
+                            } else {
+                                meals.add(entry)
+                                Task { await meals.persistInsert(entry) }
+                            }
                             analytics.track("meal_saved", properties: ["spike": saved.spikeRisk])
                             estimateSession = nil
                         },
                         onDiscard: {
+                            if let sid = session.serverMealId {
+                                Task { await meals.deleteServerOnly(id: sid) }
+                            }
                             estimateSession = nil
                         }
                     )
@@ -220,11 +237,12 @@ struct CoreActionView: View {
             return
         }
 
-        let uid = auth.userId ?? "unknown"
-        guard let jpeg = image.jpegData(compressionQuality: 0.72) else {
+        guard let jpeg = gluJPEGDataForAnalysis(image) else {
             await MainActor.run { err = GluMealAnalysisUserCopy.analysisFailed }
             return
         }
+        let idempotencyKey = UUID().uuidString
+        let installId = GluInstallId.string()
         await MainActor.run {
             showCamera = false
             busy = true
@@ -238,16 +256,56 @@ struct CoreActionView: View {
         analytics.track("meal_analysis_started", properties: nil)
         let gateway = AIGatewayService(api: api)
         do {
-            let out = try await gateway.analyzeMealPhoto(jpegData: jpeg, userId: uid, accessToken: auth.accessToken)
+            let result = try await gateway.analyzeMealPhoto(
+                jpegData: jpeg,
+                accessToken: auth.accessToken,
+                idempotencyKey: idempotencyKey,
+                installId: installId
+            )
             await MainActor.run {
-                appState.recordSuccessfulFreeTierAnalysis(
+                appState.applyMealAnalysisQuotaFromServer(
+                    result.quota,
                     staffRole: auth.staffRole,
                     subscriptionAllowsAccess: subs.isPremium
                 )
-                estimateSession = MealEstimateSession(output: out, imageData: jpeg)
+                let usedServerRemaining = result.quota?.ok == true && result.quota?.remainingFree != nil
+                if !usedServerRemaining, result.charged {
+                    appState.recordSuccessfulFreeTierAnalysis(
+                        staffRole: auth.staffRole,
+                        subscriptionAllowsAccess: subs.isPremium
+                    )
+                }
+                let state = result.analysisState
+                if state == "no_food" {
+                    err = GluMealAnalysisUserCopy.noFoodDetected
+                    busy = false
+                    previewImage = nil
+                    analytics.track("meal_analysis_no_food", properties: nil)
+                    return
+                }
+                if state == "analysis_failed" {
+                    err = GluMealAnalysisUserCopy.analysisFailed
+                    busy = false
+                    previewImage = nil
+                    analytics.track("meal_analysis_failed", properties: ["state": state])
+                    return
+                }
+                let env = result.envelope ?? GluMealEnvelope.legacy(from: result.userEstimate)
+                let serverRow = result.mealId != nil
+                estimateSession = MealEstimateSession(
+                    output: result.userEstimate,
+                    envelope: env,
+                    imageData: jpeg,
+                    serverMealId: result.mealId,
+                    serverRowExists: serverRow,
+                    chargedAnalysis: result.charged
+                )
                 busy = false
                 previewImage = nil
-                analytics.track("meal_analysis_completed", properties: ["spike": out.spikeRisk])
+                analytics.track("meal_analysis_completed", properties: [
+                    "spike": result.userEstimate.spikeRisk,
+                    "state": state,
+                ])
             }
         } catch {
             await MainActor.run {
@@ -260,10 +318,37 @@ struct CoreActionView: View {
     }
 }
 
+// MARK: - Image bounds (client-side downscale)
+
+private func gluDownscaleImageForAnalysis(_ image: UIImage) -> UIImage {
+    let maxSide: CGFloat = 1280
+    let longest = max(image.size.width, image.size.height)
+    guard longest > maxSide else { return image }
+    let scale = maxSide / longest
+    let newSize = CGSize(width: image.size.width * scale, height: image.size.height * scale)
+    let r = UIGraphicsImageRenderer(size: newSize)
+    return r.image { _ in
+        image.draw(in: CGRect(origin: .zero, size: newSize))
+    }
+}
+
+private func gluJPEGDataForAnalysis(_ image: UIImage) -> Data? {
+    let img = gluDownscaleImageForAnalysis(image)
+    var q: CGFloat = 0.72
+    for _ in 0 ..< 8 {
+        guard let d = img.jpegData(compressionQuality: q) else { return nil }
+        if d.count < 1_800_000 { return d }
+        q -= 0.1
+        if q < 0.18 { break }
+    }
+    return img.jpegData(compressionQuality: 0.18)
+}
+
 // MARK: - Meal Estimate (shared — new meal + history edit)
 
 struct GluMealEstimateSheet: View {
     let snapshot: MealAIOutput
+    let envelope: GluMealEnvelope?
     let imageData: Data?
     var onSave: (MealAIOutput) -> Void
     var onDiscard: () -> Void
@@ -277,8 +362,15 @@ struct GluMealEstimateSheet: View {
         case editing
     }
 
-    init(snapshot: MealAIOutput, imageData: Data?, onSave: @escaping (MealAIOutput) -> Void, onDiscard: @escaping () -> Void) {
+    init(
+        snapshot: MealAIOutput,
+        envelope: GluMealEnvelope? = nil,
+        imageData: Data?,
+        onSave: @escaping (MealAIOutput) -> Void,
+        onDiscard: @escaping () -> Void
+    ) {
         self.snapshot = snapshot
+        self.envelope = envelope
         self.imageData = imageData
         self.onSave = onSave
         self.onDiscard = onDiscard
@@ -300,6 +392,23 @@ struct GluMealEstimateSheet: View {
                         .resizable()
                         .scaledToFit()
                         .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
+                }
+
+                if let env = envelope {
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Spike lesson")
+                            .font(AppTheme.Typography.headline)
+                        SpikeRiskPill(risk: env.spike_lesson.risk_band)
+                        Text(env.spike_lesson.headline)
+                            .font(AppTheme.Typography.subhead)
+                            .foregroundStyle(AppTheme.label)
+                        Text(env.spike_lesson.coaching)
+                            .font(AppTheme.Typography.body)
+                            .foregroundStyle(AppTheme.secondaryLabel)
+                    }
+                    .padding(12)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(AppTheme.dashboardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
                 }
 
                 HStack {

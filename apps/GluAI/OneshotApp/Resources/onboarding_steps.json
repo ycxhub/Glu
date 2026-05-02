@@ -179,7 +179,8 @@
       "title": "Your starting plan is ready",
       "subtitle": "Educational only — not medical advice.",
       "options": null,
-      "cta": "Save my plan"
+      "cta": "Save my plan",
+      "secondaryCta": "Continue to sign in"
     }
   ]
 }

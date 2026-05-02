@@ -3,9 +3,11 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(AppState.self) private var appState
+    var api: APIClient
     @Bindable var auth: AuthController
     @Bindable var sub: RevenueCatSubscriptionService
     @State private var showDeleteConfirm = false
+    @State private var busyDelete = false
     @State private var err: String?
 
     private var revenueCatConfigured: Bool {
@@ -102,13 +104,46 @@ struct SettingsView: View {
             }
             .navigationTitle("Settings")
         }
-        .alert("Delete all data locally?", isPresented: $showDeleteConfirm) {
+        .alert("Delete your Glu account?", isPresented: $showDeleteConfirm) {
             Button("Cancel", role: .cancel) { }
-            Button("Delete", role: .destructive) {
-                err = "Implement server-side delete (Supabase cascade + Storage + RevenueCat) — see design.md §18 / screens_updated §15."
+            Button("Delete account", role: .destructive) {
+                Task { await deleteAccountFlow() }
             }
         } message: {
-            Text("This build only clears the session when you sign out. Server delete is TODO.")
+            Text(
+                "This permanently deletes your Supabase account and associated meal logs. Subscriptions are managed in the App Store; cancel renewal there if needed."
+            )
+        }
+    }
+
+    private func deleteAccountFlow() async {
+        guard let token = auth.accessToken, !token.isEmpty else {
+            await MainActor.run {
+                err = "Sign in again to delete your account."
+            }
+            return
+        }
+        await MainActor.run {
+            busyDelete = true
+            err = nil
+        }
+        do {
+            try await api.deleteAccount(accessToken: token)
+            await sub.logOut()
+            await auth.signOutFromSupabase()
+            await MainActor.run {
+                appState.signOutUser()
+                busyDelete = false
+            }
+        } catch {
+            await MainActor.run {
+                busyDelete = false
+                if let m = error as? MealAnalyzeError, case .badStatus(let c) = m {
+                    err = "Could not delete account (HTTP \(c)). Try again or sign out and contact support."
+                } else {
+                    err = GluMealAnalysisUserCopy.connectionFailed
+                }
+            }
         }
     }
 }
