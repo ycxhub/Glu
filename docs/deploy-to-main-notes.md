@@ -74,12 +74,16 @@ _Complexity:_ `git show c89be93 --numstat` → 5178 insertions + 250 deletions a
 
 ---
 
-## Glu AI — documentation canon (2026 onward)
+## Glu AI — documentation hierarchy (2026 onward)
 
-Shipped behavior and UX are defined **only** by:
+Product direction, v1 wedge, positioning, onboarding intent, success criteria, and engineering handoff priorities are defined by:
+
+1. [`apps/GluAI/design-doc.md`](../apps/GluAI/design-doc.md)
+
+Supporting implementation references:
 
 1. [`apps/GluAI/design.md`](../apps/GluAI/design.md)
-2. [`apps/GluAI/screens_updated.md`](../apps/GluAI/screens_updated.md) (subordinate to `design.md`)
+2. [`apps/GluAI/screens_updated.md`](../apps/GluAI/screens_updated.md)
 
-The older duplicate brief `apps/GluAI/screens.md` was **removed** — use `screens_updated.md`. Legacy PRDs and milestones now live under [`archive/`](../archive/); see [`archive/README.md`](../archive/README.md).
+If these supporting docs disagree with `design-doc.md`, update them to follow `design-doc.md`. The older duplicate brief `apps/GluAI/screens.md` was **removed** — use `screens_updated.md` as the interaction reference. Legacy PRDs and milestones now live under [`archive/`](../archive/); see [`archive/README.md`](../archive/README.md).
 

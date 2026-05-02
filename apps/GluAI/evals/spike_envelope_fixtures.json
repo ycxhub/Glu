@@ -1,0 +1,20 @@
+{
+  "description": "Offline fixtures for spike-lesson sanitizer / UI copy checks (see analyze-meal FORBIDDEN_SPIKE_PHRASES).",
+  "cases": [
+    {
+      "id": "clean_coaching",
+      "coaching": "Fiber and protein can blunt the curve — educational guess only.",
+      "expect_forbidden_match": false
+    },
+    {
+      "id": "bad_prescribe",
+      "coaching": "We prescribe insulin adjustments based on this photo.",
+      "expect_forbidden_match": true
+    },
+    {
+      "id": "bad_diagnosis",
+      "coaching": "This meal diagnoses poor control.",
+      "expect_forbidden_match": true
+    }
+  ]
+}
