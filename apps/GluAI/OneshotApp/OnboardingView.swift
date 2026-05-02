@@ -163,12 +163,12 @@ private struct OnboardingStepContent: View {
 
             switch step.kind {
             case .welcome:
-                HStack(spacing: 6) {
-                    Image(systemName: "star.fill").foregroundStyle(.yellow)
-                    Text("Built for people managing diabetes")
-                        .font(AppTheme.Typography.subhead)
-                        .foregroundStyle(AppTheme.secondaryLabel)
-                }
+                Label("Built for people managing diabetes", systemImage: "leaf.fill")
+                    .font(AppTheme.Typography.subhead)
+                    .foregroundStyle(AppTheme.secondaryLabel)
+                    .labelStyle(.titleAndIcon)
+                    .symbolRenderingMode(.hierarchical)
+                    .tint(AppTheme.brand)
             case .singleChoice:
                 if let opts = step.options {
                     ForEach(opts, id: \.self) { o in
@@ -198,13 +198,20 @@ private struct OnboardingStepContent: View {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
                     .fill(AppTheme.surface)
                     .frame(height: 72)
-                    .overlay(alignment: .leading) {
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("Glu AI")
-                                .font(.caption.weight(.semibold))
-                                .foregroundStyle(AppTheme.secondaryLabel)
-                            Text("Quick lunch log? 📸")
-                                .font(AppTheme.Typography.subhead)
+                    .overlay {
+                        HStack(alignment: .center, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("Glu AI")
+                                    .font(.caption.weight(.semibold))
+                                    .foregroundStyle(AppTheme.secondaryLabel)
+                                Text("Quick lunch log?")
+                                    .font(AppTheme.Typography.subhead)
+                            }
+                            Spacer(minLength: 0)
+                            Image(systemName: "camera.fill")
+                                .font(.title3)
+                                .foregroundStyle(AppTheme.brand.opacity(0.85))
+                                .accessibilityHidden(true)
                         }
                         .padding(.horizontal, 16)
                     }
