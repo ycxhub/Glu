@@ -3,6 +3,7 @@ import UIKit
 
 struct HomeView: View {
     @Environment(AppState.self) private var appState
+    @Environment(\.colorScheme) private var colorScheme
     @Bindable var meals: MealLogStore
     var userId: String?
     var displayName: String?
@@ -54,7 +55,7 @@ struct HomeView: View {
                     .padding(20)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(AppTheme.surface)
-                    .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
 
                     if !meals.todayMeals.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
@@ -95,6 +96,8 @@ struct HomeView: View {
                 }
                 .padding(24)
             }
+            .scrollContentBackground(.hidden)
+            .background(AppTheme.dashboardSurface)
             .navigationBarTitleDisplayMode(.inline)
             .sheet(item: $selectedMeal) { entry in
                 NavigationStack {
@@ -170,7 +173,7 @@ struct HomeView: View {
         }
         .padding(20)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(AppTheme.surface)
+        .background(AppTheme.insightLavender.opacity(colorScheme == .dark ? 0.22 : 0.35))
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
     }
 
@@ -248,7 +251,7 @@ private struct MealRowCard: View {
         }
         .padding(12)
         .background(AppTheme.surface)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(combinedAccessibilityLabel)
         .accessibilityHint("Opens meal estimate")
