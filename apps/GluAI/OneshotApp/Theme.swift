@@ -307,11 +307,26 @@ struct MealResultDetailView: View {
                         .lineLimit(2)
                         .minimumScaleFactor(0.85)
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
+                .background(Self.macroRowTint(for: r.0).opacity(0.38))
+                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
             }
         }
         .padding(AppTheme.Layout.optionRowPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
+    }
+
+    private static func macroRowTint(for label: String) -> Color {
+        switch label {
+        case "Carbs": return AppTheme.macroCarbs
+        case "Protein": return AppTheme.macroProtein
+        case "Fat": return AppTheme.macroFat
+        case "Fiber": return AppTheme.seafoamAccent
+        case "Sugar": return AppTheme.insightLavender
+        default: return AppTheme.divider
+        }
     }
 }

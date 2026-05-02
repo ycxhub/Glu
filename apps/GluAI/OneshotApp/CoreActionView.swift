@@ -407,6 +407,21 @@ struct GluMealEstimateSheet: View {
                 .minimumScaleFactor(0.85)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(10)
+        .background(macroKeyTint(k).opacity(k == "Items" ? 0.28 : 0.38))
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+    }
+
+    private func macroKeyTint(_ key: String) -> Color {
+        switch key {
+        case "Carbs": return AppTheme.macroCarbs
+        case "Protein": return AppTheme.macroProtein
+        case "Fat": return AppTheme.macroFat
+        case "Fiber": return AppTheme.seafoamAccent
+        case "Sugar": return AppTheme.insightLavender
+        case "Items": return AppTheme.brandMuted
+        default: return AppTheme.divider
+        }
     }
 
     @ViewBuilder
