@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Glu AI — SwiftUI shell from `prd-glu-ai/` + `templates/ios-oneshot`.
+/// Glu AI — SwiftUI shell; spec: `apps/GluAI/design.md` + `screens_updated.md`.
 @main
 struct OneshotAppApp: App {
     @State private var appState = AppState()

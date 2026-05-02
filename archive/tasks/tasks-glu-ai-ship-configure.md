@@ -1,15 +1,21 @@
+# Tasks (archived): Glu AI — Ship / configure checklist
+
+> **Archived** — see [`archive/README.md`](../../README.md). Use [`apps/GluAI/README.md`](../../apps/GluAI/README.md) for ongoing build secrets and RevenueCat/Supabase setup.
+
+---
+
 ## Relevant Files
 
-- [`apps/GluAI/OneshotApp/Resources/AppSecrets.plist`](apps/GluAI/OneshotApp/Resources/AppSecrets.plist) — Local secrets (gitignored): Supabase host + publishable key, RevenueCat **public** SDK key, entitlement id.
-- [`apps/GluAI/OneshotApp/Resources/AppSecrets.plist.example`](apps/GluAI/OneshotApp/Resources/AppSecrets.plist.example) — Safe template for new clones.
-- [`apps/GluAI/README.md`](apps/GluAI/README.md) — Glu build commands, RevenueCat/Supabase operational notes.
-- [`apps/GluAI/OneshotApp/Services.swift`](apps/GluAI/OneshotApp/Services.swift) — Reads plist keys (`APIConfig`); default entitlement id **Glu Gold**.
-- [`apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift`](apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift) — Purchases configure, `yearly`/`monthly` package resolution.
-- [`apps/GluAI/OneshotApp/PaywallView.swift`](apps/GluAI/OneshotApp/PaywallView.swift) — RevenueCatUI paywall + fallback when key missing.
-- [`apps/GluAI/OneshotApp/AuthView.swift`](apps/GluAI/OneshotApp/AuthView.swift) — Sign in with Apple → Supabase `signInWithIdToken`.
-- [`apps/GluAI/OneshotApp/OneshotApp.entitlements`](apps/GluAI/OneshotApp/OneshotApp.entitlements) — Sign in with Apple capability blob.
-- [`apps/GluAI/OneshotApp.xcodeproj/project.pbxproj`](apps/GluAI/OneshotApp.xcodeproj/project.pbxproj) — Bundle ID, SPM packages, entitlements path.
-- [`supabase/migrations/20250429120000_user_staff_roles.sql`](supabase/migrations/20250429120000_user_staff_roles.sql) — Staff table + RLS.
+- [`apps/GluAI/OneshotApp/Resources/AppSecrets.plist`](../../apps/GluAI/OneshotApp/Resources/AppSecrets.plist) — Local secrets (gitignored): Supabase host + publishable key, RevenueCat **public** SDK key, entitlement id.
+- [`apps/GluAI/OneshotApp/Resources/AppSecrets.plist.example`](../../apps/GluAI/OneshotApp/Resources/AppSecrets.plist.example) — Safe template for new clones.
+- [`apps/GluAI/README.md`](../../apps/GluAI/README.md) — Glu build commands, RevenueCat/Supabase operational notes.
+- [`apps/GluAI/OneshotApp/Services.swift`](../../apps/GluAI/OneshotApp/Services.swift) — Reads plist keys (`APIConfig`); default entitlement id **Glu Gold**.
+- [`apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift`](../../apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift) — Purchases configure, `yearly`/`monthly` package resolution.
+- [`apps/GluAI/OneshotApp/PaywallView.swift`](../../apps/GluAI/OneshotApp/PaywallView.swift) — RevenueCatUI paywall + fallback when key missing.
+- [`apps/GluAI/OneshotApp/AuthView.swift`](../../apps/GluAI/OneshotApp/AuthView.swift) — Sign in with Apple → Supabase `signInWithIdToken`.
+- [`apps/GluAI/OneshotApp/OneshotApp.entitlements`](../../apps/GluAI/OneshotApp/OneshotApp.entitlements) — Sign in with Apple capability blob.
+- [`apps/GluAI/OneshotApp.xcodeproj/project.pbxproj`](../../apps/GluAI/OneshotApp.xcodeproj/project.pbxproj) — Bundle ID, SPM packages, entitlements path.
+- [`supabase/migrations/20250429120000_user_staff_roles.sql`](../../supabase/migrations/20250429120000_user_staff_roles.sql) — Staff table + RLS.
 
 ### Notes
 
@@ -75,4 +81,4 @@
   - [ ] **6.6** Regression: staff user **without** subscription still reaches main **if** `admin`/`developer` (matches `AccessEvaluator`).
 - [ ] **7.0** *(Optional backlog)*
   - [ ] **7.1** RevenueCat **server notifications** / webhook → optional mirror subscription state server-side ([Connect server notifications](https://www.revenuecat.com/docs/projects/connect-server-webhooks)).
-  - [ ] **7.2** CI: cache SPM artifacts (e.g. `-clonedSourcePackagesDirPath`) so `xcodebuild` skips long **Resolve Package Graph** (see [`apps/GluAI/README.md`](apps/GluAI/README.md)).
+  - [ ] **7.2** CI: cache SPM artifacts (e.g. `-clonedSourcePackagesDirPath`) so `xcodebuild` skips long **Resolve Package Graph** (see [`apps/GluAI/README.md`](../../apps/GluAI/README.md)).

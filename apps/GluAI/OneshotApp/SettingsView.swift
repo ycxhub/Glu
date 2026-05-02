@@ -105,7 +105,7 @@ struct SettingsView: View {
         .alert("Delete all data locally?", isPresented: $showDeleteConfirm) {
             Button("Cancel", role: .cancel) { }
             Button("Delete", role: .destructive) {
-                err = "Implement Supabase cascade + Storage + RC per prd-glu-ai/auth.md"
+                err = "Implement server-side delete (Supabase cascade + Storage + RevenueCat) — see design.md §18 / screens_updated §15."
             }
         } message: {
             Text("This build only clears the session when you sign out. Server delete is TODO.")

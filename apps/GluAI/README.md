@@ -1,6 +1,15 @@
 # Glu AI (iOS)
 
-Runnable SwiftUI app generated from [`prd-glu-ai/`](../prd-glu-ai/) using [`templates/ios-oneshot/`](../templates/ios-oneshot/).
+SwiftUI app (originated from [`archive/prd-glu-ai/`](../archive/prd-glu-ai/) oneshot PRD scaffolding + [`templates/ios-oneshot/`](../templates/ios-oneshot/)).
+
+### Documentation you can rely on
+
+| File | Role |
+|------|------|
+| [`design.md`](./design.md) | Primary spec: product behavior, Pastel Precision tokens, onboarding/paywall rules |
+| [`screens_updated.md`](./screens_updated.md) | Screen and interaction brief (subordinate to `design.md`) |
+
+Legacy PRDs and shipped checklists live under **`archive/`** (`archive/README.md`). They are **not** authoritative when they disagree with `design.md`.
 
 ## Open in Xcode
 
@@ -23,7 +32,7 @@ xcodebuild -project OneshotApp.xcodeproj -scheme OneshotApp -destination 'generi
 
 | Area | Status |
 |------|--------|
-| Design tokens (`Theme.swift`) | Mapped from `prd-glu-ai/design.md` |
+| Design tokens (`Theme.swift`) | Mapped from [`design.md`](./design.md) |
 | Onboarding | JSON-driven `Resources/onboarding_steps.json` |
 | Auth | **Sign in with Apple** → Supabase `signInWithIdToken` (OpenID / Apple); mock path when no `AppSecrets` client |
 | Paywall | **RevenueCatUI** `PaywallView` (dashboard paywall) + `RevenueCatSubscriptionService` |

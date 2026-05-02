@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-/// App phase: onboard → auth → paywall → main (`prd-glu-ai-redesign`).
+/// App phase: onboarding → auth → paywall → main (see design.md onboarding + paywall sections).
 @Observable
 final class AppState {
     enum Phase: Equatable {

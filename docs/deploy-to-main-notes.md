@@ -60,7 +60,7 @@ _Complexity:_ `git show HEAD --numstat` → ~1.4k insert/delete across 23 files 
 
 **Deployment notes**
 
-- **New features:** Free-tier path (5 meal analyses, paywall dismiss into free mode, gating on new analyses); PRD/task docs (`tasks/prd-glu-ai-redesign.md`, `tasks/tasks-glu-ai-redesign.md`, `apps/GluAI/design.md`, `screens*.md`); calm meal-analysis copy (`GluMealAnalysisUserCopy`), low-confidence / no-food hints on Meal Estimate.
+- **New features:** Free-tier path (5 meal analyses, paywall dismiss into free mode, gating on new analyses); redesign docs (`tasks/prd-glu-ai-redesign.md`, `tasks/tasks-glu-ai-redesign.md` → **later moved** to [`archive/tasks/`](../archive/tasks/)); `apps/GluAI/design.md`; `screens*.md`; calm meal-analysis copy (`GluMealAnalysisUserCopy`), low-confidence / no-food hints on Meal Estimate.
 - **Feature enhancements:** Pastel Precision theme (light/dark), 19-step onboarding with tier reveal, Home/Log/History/Settings flows, full Meal Estimate edit/save pipeline; RevenueCat paywall secondary “Try 5 meals,” analytics (`auth_*`, tab views, meal funnel); Dynamic Type / VoiceOver / Reduce Motion–aware UI; app icon assets refresh; notifications usage string; `.gitignore` extended for `xcuserdata`.
 - **Bug fixes:** Log tab no longer surfaces raw `localizedDescription` for failed photo analysis.
 
@@ -71,3 +71,15 @@ _Complexity:_ `git show HEAD --numstat` → ~1.4k insert/delete across 23 files 
 3. `apps/GluAI/screens.md` — 470 insertions
 
 _Complexity:_ `git show c89be93 --numstat` → 5178 insertions + 250 deletions across 34 files → **High**. Pushed to **GitHub** `main` (`ycxhub/Glu`). No Vercel project in this repo for this deploy.
+
+---
+
+## Glu AI — documentation canon (2026 onward)
+
+Shipped behavior and UX are defined **only** by:
+
+1. [`apps/GluAI/design.md`](../apps/GluAI/design.md)
+2. [`apps/GluAI/screens_updated.md`](../apps/GluAI/screens_updated.md) (subordinate to `design.md`)
+
+The older duplicate brief `apps/GluAI/screens.md` was **removed** — use `screens_updated.md`. Legacy PRDs and milestones now live under [`archive/`](../archive/); see [`archive/README.md`](../archive/README.md).
+

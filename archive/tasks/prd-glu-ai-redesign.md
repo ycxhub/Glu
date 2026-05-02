@@ -1,3 +1,7 @@
+> **Archived** — see repo [`archive/README.md`](../../README.md). Not used for ongoing builds.
+
+> **Canon:** [`apps/GluAI/design.md`](../../apps/GluAI/design.md) + [`screens_updated.md`](../../apps/GluAI/screens_updated.md). This PRD captures **historical stakeholder decisions** for a redesign spike; ongoing product definition lives in those two files.
+
 # PRD: Glu AI — Product Redesign (iOS)
 
 ## 1. Introduction / Overview

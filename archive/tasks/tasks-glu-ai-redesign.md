@@ -1,33 +1,37 @@
+> **Archived** — see repo [`archive/README.md`](../../README.md). Milestone checklist only.
+
+> **Canon:** [`apps/GluAI/design.md`](../../apps/GluAI/design.md) + [`screens_updated.md`](../../apps/GluAI/screens_updated.md). This file is a **past milestone checklist**, not a parallel spec — if anything here disagrees with `design.md`, **`design.md` wins**.
+
 # Tasks: Glu AI — Redesign (from `prd-glu-ai-redesign.md`)
 
 Implementation tasks for the iOS SwiftUI redesign: **Pastel Precision** shell, **19-step onboarding**, **Auth → paywall → 5 free analyses / Glu Gold**, **Home / Log / History / Settings**, **Meal Estimate** with **full pre-save editing**, accessibility, and copy guardrails per the PRD and `apps/GluAI/design.md` / `apps/GluAI/screens_updated.md`.
 
 ## Relevant Files
 
-- [`apps/GluAI/OneshotApp/Theme.swift`](../apps/GluAI/OneshotApp/Theme.swift) — Colors, typography, spacing; extend for **Pastel Precision** tokens and dark mode.
-- [`apps/GluAI/OneshotApp/MainTabView.swift`](../apps/GluAI/OneshotApp/MainTabView.swift) — Four-tab shell; tab order and analytics `home_viewed` hook.
-- [`apps/GluAI/OneshotApp/AppRootView.swift`](../apps/GluAI/OneshotApp/AppRootView.swift) — Phase routing; `NoopAnalytics` from environment; service wiring.
-- [`apps/GluAI/OneshotApp/AppState.swift`](../apps/GluAI/OneshotApp/AppState.swift) — Phase, premium flags, persistence keys; **extend for free-analysis budget** and routing when not subscribed.
-- [`apps/GluAI/OneshotApp/GluAccess.swift`](../apps/GluAI/OneshotApp/GluAccess.swift) — `AccessEvaluator.canUseMainApp`; may need **free-tier path** to main app without full subscription.
-- [`apps/GluAI/OneshotApp/OnboardingStepDefinition.swift`](../apps/GluAI/OneshotApp/OnboardingStepDefinition.swift) — JSON schema for step `kind` / fields; align with **19-step** IDs (`design.md` §10).
-- [`apps/GluAI/OneshotApp/Resources/onboarding_steps.json`](../apps/GluAI/OneshotApp/Resources/onboarding_steps.json) — **19-step** content, CTAs, options per PRD / `screens_updated.md` §7.
-- [`apps/GluAI/OneshotApp/OnboardingView.swift`](../apps/GluAI/OneshotApp/OnboardingView.swift) — Step UI, progress, back, multi-select rules.
-- [`apps/GluAI/OneshotApp/OnboardingViewModel.swift`](../apps/GluAI/OneshotApp/OnboardingViewModel.swift) — Selection state, plan tier (Gentle / Balanced / Focused), plan bullets.
-- [`apps/GluAI/OneshotApp/AuthView.swift`](../apps/GluAI/OneshotApp/AuthView.swift) — Sign in with Apple, PRD copy (“keep plan and meal history synced”).
-- [`apps/GluAI/OneshotApp/PaywallView.swift`](../apps/GluAI/OneshotApp/PaywallView.swift) — RevenueCat `PaywallView`, restore, **dismiss → free mode** (replace sign-out-only close if needed).
-- [`apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift`](../apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift) — Entitlement **Glu Gold**; sync with `AppState`.
-- [`apps/GluAI/OneshotApp/HomeView.swift`](../apps/GluAI/OneshotApp/HomeView.swift) — Today dashboard, recent meals, insight, **free counter**, empty state.
-- [`apps/GluAI/OneshotApp/CoreActionView.swift`](../apps/GluAI/OneshotApp/CoreActionView.swift) — **Log** tab; camera-primary layout, analyze gate, shared **`GluMealEstimateSheet`** (new meal + history edit).
-- [`apps/GluAI/OneshotApp/MealLogging.swift`](../apps/GluAI/OneshotApp/MealLogging.swift) — `MealLogStore`, models, sync; `replaceEntry` / Supabase `output` patch; `MealAIOutput.recomputeTotalsFromLineItems`; line-item `id` encoding.
-- [`apps/GluAI/OneshotApp/HistoryView.swift`](../apps/GluAI/OneshotApp/HistoryView.swift) — Photo grid, overlays, navigation to detail.
-- [`apps/GluAI/OneshotApp/SettingsView.swift`](../apps/GluAI/OneshotApp/SettingsView.swift) — Grouped list, subscription, **free analyses** row, legal, delete account.
-- [`apps/GluAI/OneshotApp/Services.swift`](../apps/GluAI/OneshotApp/Services.swift) — `APIClient`, **`AuthController`**, AI meal analysis types; payloads may need editable line items.
-- [`apps/GluAI/OneshotApp/OneshotAppApp.swift`](../apps/GluAI/OneshotApp/OneshotAppApp.swift) — Shared `NoopAnalytics` + `AppState` injected into the environment.
-- [`apps/GluAI/OneshotApp/DevNavigatorOverlay.swift`](../apps/GluAI/OneshotApp/DevNavigatorOverlay.swift) — QA-only; keep hidden in production.
-- [`apps/GluAI/OneshotApp/Resources/AppSecrets.plist.example`](../apps/GluAI/OneshotApp/Resources/AppSecrets.plist.example) — RevenueCat / API keys docs for devs.
-- [`apps/GluAI/design.md`](../apps/GluAI/design.md) — Authoritative product/design spec.
-- [`apps/GluAI/screens_updated.md`](../apps/GluAI/screens_updated.md) — Screen/interaction brief.
-- [`tasks/prd-glu-ai-redesign.md`](prd-glu-ai-redesign.md) — Requirements checklist.
+- [`apps/GluAI/OneshotApp/Theme.swift`](../../apps/GluAI/OneshotApp/Theme.swift) — Colors, typography, spacing; extend for **Pastel Precision** tokens and dark mode.
+- [`apps/GluAI/OneshotApp/MainTabView.swift`](../../apps/GluAI/OneshotApp/MainTabView.swift) — Four-tab shell; tab order and analytics `home_viewed` hook.
+- [`apps/GluAI/OneshotApp/AppRootView.swift`](../../apps/GluAI/OneshotApp/AppRootView.swift) — Phase routing; `NoopAnalytics` from environment; service wiring.
+- [`apps/GluAI/OneshotApp/AppState.swift`](../../apps/GluAI/OneshotApp/AppState.swift) — Phase, premium flags, persistence keys; **extend for free-analysis budget** and routing when not subscribed.
+- [`apps/GluAI/OneshotApp/GluAccess.swift`](../../apps/GluAI/OneshotApp/GluAccess.swift) — `AccessEvaluator.canUseMainApp`; may need **free-tier path** to main app without full subscription.
+- [`apps/GluAI/OneshotApp/OnboardingStepDefinition.swift`](../../apps/GluAI/OneshotApp/OnboardingStepDefinition.swift) — JSON schema for step `kind` / fields; align with **19-step** IDs (`design.md` §10).
+- [`apps/GluAI/OneshotApp/Resources/onboarding_steps.json`](../../apps/GluAI/OneshotApp/Resources/onboarding_steps.json) — **19-step** content, CTAs, options per PRD / `screens_updated.md` §7.
+- [`apps/GluAI/OneshotApp/OnboardingView.swift`](../../apps/GluAI/OneshotApp/OnboardingView.swift) — Step UI, progress, back, multi-select rules.
+- [`apps/GluAI/OneshotApp/OnboardingViewModel.swift`](../../apps/GluAI/OneshotApp/OnboardingViewModel.swift) — Selection state, plan tier (Gentle / Balanced / Focused), plan bullets.
+- [`apps/GluAI/OneshotApp/AuthView.swift`](../../apps/GluAI/OneshotApp/AuthView.swift) — Sign in with Apple, PRD copy (“keep plan and meal history synced”).
+- [`apps/GluAI/OneshotApp/PaywallView.swift`](../../apps/GluAI/OneshotApp/PaywallView.swift) — RevenueCat `PaywallView`, restore, **dismiss → free mode** (replace sign-out-only close if needed).
+- [`apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift`](../../apps/GluAI/OneshotApp/RevenueCatSubscriptionService.swift) — Entitlement **Glu Gold**; sync with `AppState`.
+- [`apps/GluAI/OneshotApp/HomeView.swift`](../../apps/GluAI/OneshotApp/HomeView.swift) — Today dashboard, recent meals, insight, **free counter**, empty state.
+- [`apps/GluAI/OneshotApp/CoreActionView.swift`](../../apps/GluAI/OneshotApp/CoreActionView.swift) — **Log** tab; camera-primary layout, analyze gate, shared **`GluMealEstimateSheet`** (new meal + history edit).
+- [`apps/GluAI/OneshotApp/MealLogging.swift`](../../apps/GluAI/OneshotApp/MealLogging.swift) — `MealLogStore`, models, sync; `replaceEntry` / Supabase `output` patch; `MealAIOutput.recomputeTotalsFromLineItems`; line-item `id` encoding.
+- [`apps/GluAI/OneshotApp/HistoryView.swift`](../../apps/GluAI/OneshotApp/HistoryView.swift) — Photo grid, overlays, navigation to detail.
+- [`apps/GluAI/OneshotApp/SettingsView.swift`](../../apps/GluAI/OneshotApp/SettingsView.swift) — Grouped list, subscription, **free analyses** row, legal, delete account.
+- [`apps/GluAI/OneshotApp/Services.swift`](../../apps/GluAI/OneshotApp/Services.swift) — `APIClient`, **`AuthController`**, AI meal analysis types; payloads may need editable line items.
+- [`apps/GluAI/OneshotApp/OneshotAppApp.swift`](../../apps/GluAI/OneshotApp/OneshotAppApp.swift) — Shared `NoopAnalytics` + `AppState` injected into the environment.
+- [`apps/GluAI/OneshotApp/DevNavigatorOverlay.swift`](../../apps/GluAI/OneshotApp/DevNavigatorOverlay.swift) — QA-only; keep hidden in production.
+- [`apps/GluAI/OneshotApp/Resources/AppSecrets.plist.example`](../../apps/GluAI/OneshotApp/Resources/AppSecrets.plist.example) — RevenueCat / API keys docs for devs.
+- [`apps/GluAI/design.md`](../../apps/GluAI/design.md) — Authoritative product/design spec.
+- [`apps/GluAI/screens_updated.md`](../../apps/GluAI/screens_updated.md) — Screen/interaction brief.
+- [`prd-glu-ai-redesign.md`](./prd-glu-ai-redesign.md) — Archived requirements checklist.
 - `apps/GluAI/OneshotApp.xcodeproj` — Targets, signing, entitlement for Sign in with Apple.
 
 ### Notes

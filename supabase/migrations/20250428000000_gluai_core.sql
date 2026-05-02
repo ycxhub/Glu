@@ -1,4 +1,4 @@
--- Glu AI core schema (prd-glu-ai/architecture.md)
+-- Glu AI core schema (historical reference: `archive/prd-glu-ai/architecture.md`; authoritative docs: `apps/GluAI/design.md`)
 -- RLS: users only touch their own rows.
 
 create extension if not exists "pgcrypto";

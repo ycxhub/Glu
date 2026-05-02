@@ -2,7 +2,7 @@ import Foundation
 import Observation
 import Supabase
 
-// MARK: - Analytics (`prd-glu-ai/architecture.md`)
+// MARK: - Analytics (event names aligned with screens_updated §24 where applicable)
 
 protocol AnalyticsService: AnyObject {
     func track(_ name: String, properties: [String: String]?)
@@ -160,7 +160,7 @@ final class APIClient {
         self.session = session
     }
 
-    /// POST image to Edge Function; falls back to mock when `SUPABASE_URL` unset (`prd-glu-ai/ai.md`).
+    /// POST image to Edge Function; falls back to mock when `SUPABASE_URL` unset.
     func analyzeMeal(imageJPEG: Data, userId: String, accessToken: String?) async throws -> MealAIOutput {
         guard let rawBase = APIConfig.supabaseURL?.trimmingCharacters(in: CharacterSet(charactersIn: "/")) else {
             try await Task.sleep(nanoseconds: 400_000_000)
@@ -209,7 +209,7 @@ final class APIClient {
     }
 }
 
-// MARK: - Auth (`prd-glu-ai/auth.md`)
+// MARK: - Auth (Supabase; Settings copy per design.md §18 / screens_updated §15)
 
 @MainActor
 @Observable
