@@ -281,7 +281,7 @@ struct MealResultDetailView: View {
             }
             .padding(AppTheme.Layout.screenPadding)
         }
-        .navigationTitle("Meal Estimate")
+        .navigationTitle("Meal")
         .navigationBarTitleDisplayMode(.inline)
         .confirmationDialog("Delete this meal from your history?", isPresented: $confirmDelete, titleVisibility: .visible) {
             Button("Delete", role: .destructive, action: onDelete)
