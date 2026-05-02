@@ -72,8 +72,8 @@ struct SettingsView: View {
                         .foregroundStyle(AppTheme.secondaryLabel)
                 }
                 Section("Legal") {
-                    Link("Terms of Use", destination: URL(string: "https://example.com/terms")!)
-                    Link("Privacy Policy", destination: URL(string: "https://example.com/privacy")!)
+                    Link("Terms of Use", destination: AppLegalLinks.termsOfUse)
+                    Link("Privacy Policy", destination: AppLegalLinks.privacyPolicy)
                 }
                 #if DEBUG
                 Section("Developer") {

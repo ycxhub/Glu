@@ -92,6 +92,14 @@ enum APIConfig {
     }
 }
 
+/// Public legal URLs for in-app links (`legal/privacy-policy.md`, App Store Connect).
+enum AppLegalLinks {
+    /// Live privacy policy for Glu AI.
+    static let privacyPolicy = URL(string: "https://hard75.com/glu-ai/privacy-policy")!
+    /// Apple’s standard license for auto‑renewable subscriptions until a dedicated Glu terms page is published.
+    static let termsOfUse = URL(string: "https://www.apple.com/legal/internet-services/itunes/dev/stdeula/")!
+}
+
 enum MealAnalyzeError: LocalizedError {
     case noURL
     case badStatus(Int)

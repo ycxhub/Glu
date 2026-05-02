@@ -46,9 +46,9 @@ struct PaywallView: View {
                     .padding(.horizontal, 24)
                     .frame(maxWidth: .infinity)
 
-                    Link("Terms of Use", destination: URL(string: "https://example.com/terms")!)
+                    Link("Terms of Use", destination: AppLegalLinks.termsOfUse)
                         .font(AppTheme.Typography.caption)
-                    Link("Privacy Policy", destination: URL(string: "https://example.com/privacy")!)
+                    Link("Privacy Policy", destination: AppLegalLinks.privacyPolicy)
                         .font(AppTheme.Typography.caption)
                     Spacer().frame(height: 8)
                 }
