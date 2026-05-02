@@ -61,6 +61,8 @@ struct AuthView: View {
             Spacer()
         }
         .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(AppTheme.background)
         .onAppear {
             analytics.track("auth_started", properties: nil)
         }
