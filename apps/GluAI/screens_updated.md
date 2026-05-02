@@ -5,7 +5,7 @@
 **Product:** Glu AI — a **photo-first, glucose-aware meal tracker** that provides rough calories, macros, and educational spike-risk context from meal photos.  
 **Positioning:** Educational meal awareness, not medical advice.  
 **Design language:** **Pastel Precision** — a calm watercolor-inspired wellness interface with crisp, readable, precise nutrition tools.  
-**Source of truth:** If this brief ever disagrees with [`design.md`](./design.md), **`design.md` wins**; keep this document aligned with it.
+**Source of truth:** [`design-doc.md`](./design-doc.md) is the ultimate product source of truth. This screen brief is a supporting interaction reference and should be updated whenever it disagrees with `design-doc.md`.
 
 ---
 

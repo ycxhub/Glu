@@ -404,9 +404,8 @@ s3_secret_key = "env(S3_SECRET_KEY)"
 
 [functions.analyze-meal]
 enabled = true
-# Publishable keys (`sb_publishable_…`) are not JWTs — gateway JWT verification rejects them with 401.
-# See https://supabase.com/docs/guides/getting-started/api-keys — validate `apikey` inside the function instead.
-verify_jwt = false
+# User session JWT is validated at the gateway; function still checks `apikey` matches project publishable key.
+verify_jwt = true
 import_map = "./functions/analyze-meal/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
@@ -414,3 +413,15 @@ entrypoint = "./functions/analyze-meal/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/analyze-meal/*.html" ]
+
+[functions.revenuecat-webhook]
+enabled = true
+verify_jwt = false
+import_map = "./functions/revenuecat-webhook/deno.json"
+entrypoint = "./functions/revenuecat-webhook/index.ts"
+
+[functions.delete-account]
+enabled = true
+verify_jwt = true
+import_map = "./functions/delete-account/deno.json"
+entrypoint = "./functions/delete-account/index.ts"

@@ -152,6 +152,63 @@ struct MealAIOutput: Codable, Equatable {
     }
 }
 
+// MARK: - Spike lesson + versioned meal envelope (server + `meal_logs.envelope`)
+
+struct GluSpikeLesson: Codable, Equatable {
+    var risk_band: String
+    var headline: String
+    var coaching: String
+
+    enum CodingKeys: String, CodingKey {
+        case risk_band
+        case headline
+        case coaching
+    }
+}
+
+struct GluMealEnvelope: Codable, Equatable {
+    var envelope_version: Int
+    var prompt_version: String
+    var analysis_state: String
+    var spike_lesson: GluSpikeLesson
+    var user_estimate: MealAIOutput
+
+    enum CodingKeys: String, CodingKey {
+        case envelope_version
+        case prompt_version
+        case analysis_state
+        case spike_lesson
+        case user_estimate
+    }
+
+    /// After user edits line items / macros, only the estimate half may change; spike lesson stays immutable.
+    func updatingUserEstimate(_ new: MealAIOutput) -> GluMealEnvelope {
+        GluMealEnvelope(
+            envelope_version: envelope_version,
+            prompt_version: prompt_version,
+            analysis_state: analysis_state,
+            spike_lesson: spike_lesson,
+            user_estimate: new
+        )
+    }
+
+    /// Legacy rows: synthesize a minimal envelope from flat `MealAIOutput`.
+    static func legacy(from output: MealAIOutput) -> GluMealEnvelope {
+        let lesson = GluSpikeLesson(
+            risk_band: output.spikeRisk,
+            headline: String(output.rationale.prefix(90)),
+            coaching: output.rationale
+        )
+        return GluMealEnvelope(
+            envelope_version: 1,
+            prompt_version: "legacy-import",
+            analysis_state: "ready",
+            spike_lesson: lesson,
+            user_estimate: output
+        )
+    }
+}
+
 extension MealAIOutput {
     /// Rebuilds `totals` from line items; scales fiber/sugar/protein/fat when prior totals existed (ratio vs previous calorie total).
     mutating func recomputeTotalsFromLineItems() {
@@ -178,12 +235,14 @@ private struct MealLogInsert: Encodable {
     let id: UUID
     let user_id: UUID
     let output: MealAIOutput
+    let envelope: GluMealEnvelope?
 }
 
 private struct MealLogRow: Decodable {
     let id: UUID
     let created_at: Date
     let output: MealAIOutput
+    let envelope: GluMealEnvelope?
 }
 
 struct MealEntry: Identifiable, Equatable {
@@ -191,11 +250,27 @@ struct MealEntry: Identifiable, Equatable {
     let createdAt: Date
     let thumbnailData: Data?
     let output: MealAIOutput
+    /// Server envelope when present; legacy rows may be `nil` (UI synthesizes spike copy from `output`).
+    var envelope: GluMealEnvelope?
 
     var timeString: String {
         let f = DateFormatter()
         f.timeStyle = .short
         return f.string(from: createdAt)
+    }
+
+    init(
+        id: UUID,
+        createdAt: Date,
+        thumbnailData: Data?,
+        output: MealAIOutput,
+        envelope: GluMealEnvelope? = nil
+    ) {
+        self.id = id
+        self.createdAt = createdAt
+        self.thumbnailData = thumbnailData
+        self.output = output
+        self.envelope = envelope
     }
 }
 
@@ -227,7 +302,8 @@ final class MealLogStore {
                     id: $0.id,
                     createdAt: $0.created_at,
                     thumbnailData: nil,
-                    output: $0.output
+                    output: $0.output,
+                    envelope: $0.envelope
                 )
             }
             await MainActor.run {
@@ -251,9 +327,19 @@ final class MealLogStore {
         }
     }
 
+    /// Deletes a server row without mutating local state (e.g. discard analysis sheet before save).
+    func deleteServerOnly(id: UUID) async {
+        await deleteRemote(id: id)
+    }
+
     func persistInsert(_ entry: MealEntry) async {
         guard let client = supabase, let uidStr = syncUserId, let uid = UUID(uuidString: uidStr) else { return }
-        let row = MealLogInsert(id: entry.id, user_id: uid, output: entry.output)
+        let row = MealLogInsert(
+            id: entry.id,
+            user_id: uid,
+            output: entry.output,
+            envelope: entry.envelope
+        )
         do {
             try await client.from("meal_logs").insert(row).execute()
         } catch {
@@ -267,18 +353,24 @@ final class MealLogStore {
         if let i = meals.firstIndex(where: { $0.id == entry.id }) {
             meals[i] = entry
         }
-        await persistUpdateOutput(id: entry.id, output: entry.output)
+        await persistUpdateOutput(id: entry.id, output: entry.output, envelope: entry.envelope)
     }
 
-    private struct MealLogOutputPatch: Encodable {
+    private struct MealLogOutputEnvelopePatch: Encodable {
         let output: MealAIOutput
+        let envelope: GluMealEnvelope?
     }
 
-    private func persistUpdateOutput(id: UUID, output: MealAIOutput) async {
-        guard let client = supabase else { return }
-        let patch = MealLogOutputPatch(output: output)
+    private func persistUpdateOutput(id: UUID, output: MealAIOutput, envelope: GluMealEnvelope?) async {
+        guard let client = supabase, let uidStr = syncUserId, let uid = UUID(uuidString: uidStr) else { return }
+        let patch = MealLogOutputEnvelopePatch(output: output, envelope: envelope)
         do {
-            try await client.from("meal_logs").update(patch).eq("id", value: id.uuidString).execute()
+            try await client
+                .from("meal_logs")
+                .update(patch)
+                .eq("id", value: id.uuidString)
+                .eq("user_id", value: uid.uuidString)
+                .execute()
         } catch {
             #if DEBUG
             print("MealLogStore.persistUpdateOutput:", error)
@@ -287,9 +379,14 @@ final class MealLogStore {
     }
 
     private func deleteRemote(id: UUID) async {
-        guard let client = supabase else { return }
+        guard let client = supabase, let uidStr = syncUserId, let uid = UUID(uuidString: uidStr) else { return }
         do {
-            try await client.from("meal_logs").delete().eq("id", value: id.uuidString).execute()
+            try await client
+                .from("meal_logs")
+                .delete()
+                .eq("id", value: id.uuidString)
+                .eq("user_id", value: uid.uuidString)
+                .execute()
         } catch {
             #if DEBUG
             print("MealLogStore.deleteRemote:", error)

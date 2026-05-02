@@ -6,10 +6,12 @@ SwiftUI app (originated from [`archive/prd-glu-ai/`](../archive/prd-glu-ai/) one
 
 | File | Role |
 |------|------|
-| [`design.md`](./design.md) | Primary spec: product behavior, Pastel Precision tokens, onboarding/paywall rules |
-| [`screens_updated.md`](./screens_updated.md) | Screen and interaction brief (subordinate to `design.md`) |
+| [`design-doc.md`](./design-doc.md) | **Ultimate product source of truth**: product thesis, positioning, trust boundary/quota semantics, Spike Lesson contract, onboarding artifact pointer, engineering handoff |
+| [`onboarding-spike-awareness.md`](./onboarding-spike-awareness.md) | **Canonical 19-step spike-awareness onboarding** (copy, ids, saved fields, reveal mapping). Bundled `OneshotApp/Resources/onboarding_steps.json` is hand-transcribed from this artifact |
+| [`design.md`](./design.md) | Supporting implementation/visual spec: product behavior, Pastel Precision tokens, onboarding/paywall rules; update when it disagrees with `design-doc.md` |
+| [`screens_updated.md`](./screens_updated.md) | Supporting screen and interaction brief; update when it disagrees with `design-doc.md` |
 
-Legacy PRDs and shipped checklists live under **`archive/`** (`archive/README.md`). They are **not** authoritative when they disagree with `design.md`.
+Legacy PRDs and shipped checklists live under **`archive/`** (`archive/README.md`). They are **not** authoritative when they disagree with `design-doc.md`. The older design and screen specs are also up for change whenever `design-doc.md` supersedes them.
 
 ## Open in Xcode
 
@@ -33,10 +35,10 @@ xcodebuild -project OneshotApp.xcodeproj -scheme OneshotApp -destination 'generi
 | Area | Status |
 |------|--------|
 | Design tokens (`Theme.swift`) | Mapped from [`design.md`](./design.md) |
-| Onboarding | JSON-driven `Resources/onboarding_steps.json` |
+| Onboarding | JSON-driven today (`Resources/onboarding_steps.json`). Canonical product copy lives in [`onboarding-spike-awareness.md`](./onboarding-spike-awareness.md); the bundled JSON is a hand-transcribed export and must be checked against the markdown |
 | Auth | **Sign in with Apple** → Supabase `signInWithIdToken` (OpenID / Apple); mock path when no `AppSecrets` client |
 | Paywall | **RevenueCatUI** `PaywallView` (dashboard paywall) + `RevenueCatSubscriptionService` |
-| Subscriptions | **RevenueCat** is source of truth for trial / paid; `AccessEvaluator` + `AppState.applyAccessRouting` |
+| Subscriptions | RevenueCat manages purchase UI + client entitlements — **must** mirror active entitlements server-side (`design-doc.md`) so quota cannot be spoofed from a patched build |
 | Staff roles | `user_staff_roles` in Postgres: `admin` / `developer` (set only in SQL / service role). **Developer** gets dev bubble + paid-equivalent access. **Admin** is backend-only (no extra UI) |
 | Core action | Camera + Photos → `analyze-meal` Edge; sends user JWT when signed in |
 | History / Log | `MealLogStore` syncs to `meal_logs` when Supabase session exists |

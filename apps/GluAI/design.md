@@ -1,5 +1,7 @@
 # Glu AI — Design Brief
 
+> **Source-of-truth note:** [`design-doc.md`](./design-doc.md) is the ultimate product source of truth for Glu AI. This design brief is a supporting implementation and visual-spec reference. If this file disagrees with `design-doc.md`, update this file to follow `design-doc.md`.
+
 **Audience:** UI/UX designer, product designer, and engineering team building production-ready iOS designs.  
 **Platform:** iOS-first, SwiftUI-native, with Apple platform patterns prioritized.  
 **Product:** Glu AI, a photo-first, glucose-aware meal tracker that gives rough calories, macros, and educational spike-risk context from meal photos.  

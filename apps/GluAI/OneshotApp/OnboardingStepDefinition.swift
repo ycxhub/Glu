@@ -8,6 +8,8 @@ struct OnboardingStepDefinition: Identifiable, Codable, Hashable {
     var subtitle: String?
     var options: [String]?
     var cta: String
+    /// Optional second action on `planReveal` (e.g. alternate commitment path).
+    var secondaryCta: String? = nil
     /// When true, multi-select **Continue** works with zero selections (optional screens per `design.md` §10).
     var allowEmptySelection: Bool?
 

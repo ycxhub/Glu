@@ -64,14 +64,18 @@ struct HistoryView: View {
                 NavigationStack {
                     GluMealEstimateSheet(
                         snapshot: ent.output,
+                        envelope: ent.envelope,
                         imageData: ent.thumbnailData,
                         onSave: { out in
                             Task {
+                                let merged = ent.envelope?.updatingUserEstimate(out)
+                                    ?? GluMealEnvelope.legacy(from: out)
                                 let updated = MealEntry(
                                     id: ent.id,
                                     createdAt: ent.createdAt,
                                     thumbnailData: ent.thumbnailData,
-                                    output: out
+                                    output: out,
+                                    envelope: merged
                                 )
                                 await meals.replaceEntry(updated)
                             }
