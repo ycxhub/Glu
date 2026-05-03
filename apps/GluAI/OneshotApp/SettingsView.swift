@@ -20,7 +20,10 @@ struct SettingsView: View {
             List {
                 Section("Account") {
                     if let e = err {
-                        Text(e).font(.caption).foregroundStyle(AppTheme.error)
+                        Text(e)
+                            .font(AppTheme.Typography.footnote)
+                            .foregroundStyle(AppTheme.error)
+                            .accessibilityLabel("Account error: \(e)")
                     }
                     if let u = auth.userId {
                         Text("User ID: \(u)")
@@ -33,7 +36,14 @@ struct SettingsView: View {
                     }
                 }
                 Section("Subscription") {
-                    Text("Glu Gold: \(appState.isPremium ? "Active" : "Inactive")")
+                    HStack {
+                        Text("Glu Gold")
+                            .font(AppTheme.Typography.body)
+                        Spacer()
+                        Text(appState.isPremium ? "Active" : "Inactive")
+                            .font(AppTheme.Typography.body.weight(.semibold))
+                            .foregroundStyle(appState.isPremium ? AppTheme.brand : AppTheme.secondaryLabel)
+                    }
                     if sub.isInTrialPeriod {
                         Text("Trial active").font(AppTheme.Typography.caption).foregroundStyle(AppTheme.secondaryLabel)
                     }
@@ -97,9 +107,19 @@ struct SettingsView: View {
                             appState.signOutUser()
                         }
                     }
-                    Button("Delete account (5.1.1(v) flow)", role: .destructive) {
+                }
+
+                Section {
+                    Button(role: .destructive) {
                         showDeleteConfirm = true
+                    } label: {
+                        Text("Delete account")
+                            .foregroundStyle(AppTheme.error)
                     }
+                } footer: {
+                    Text("Permanently removes your account and meal history. This cannot be undone.")
+                        .font(AppTheme.Typography.footnote)
+                        .foregroundStyle(AppTheme.secondaryLabel)
                 }
             }
             .navigationTitle("Settings")

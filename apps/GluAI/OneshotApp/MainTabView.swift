@@ -14,7 +14,7 @@ struct MainTabView: View {
             set: { appState.selectedMainTab = $0 }
         )) {
             HomeView(meals: meals, userId: auth.userId, displayName: auth.displayName)
-                .tabItem { Label("Home", systemImage: "house") }
+                .tabItem { Label("Home", systemImage: "house.fill") }
                 .tag(0)
 
             CoreActionView(api: api, auth: auth, subs: subs, analytics: analytics, meals: meals)
@@ -22,11 +22,11 @@ struct MainTabView: View {
                 .tag(1)
 
             HistoryView(meals: meals)
-                .tabItem { Label("History", systemImage: "clock") }
+                .tabItem { Label("History", systemImage: "clock.fill") }
                 .tag(2)
 
             SettingsView(api: api, auth: auth, sub: subs)
-                .tabItem { Label("Settings", systemImage: "gearshape") }
+                .tabItem { Label("Settings", systemImage: "gearshape.fill") }
                 .tag(3)
         }
         .tint(AppTheme.brand)

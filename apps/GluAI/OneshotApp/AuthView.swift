@@ -21,7 +21,7 @@ struct AuthView: View {
                 .font(AppTheme.Typography.subhead)
                 .foregroundStyle(AppTheme.secondaryLabel)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal, 8)
+                .padding(.horizontal, AppTheme.Layout.screenPadding)
 
             if let e = err {
                 Text(e).font(AppTheme.Typography.footnote).foregroundStyle(AppTheme.error)
@@ -37,8 +37,22 @@ struct AuthView: View {
             }
             .signInWithAppleButtonStyle(.black)
             .frame(height: 56)
-            .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-            .padding(.horizontal, 24)
+            .cornerRadius(AppTheme.Layout.buttonRadius)
+            .padding(.horizontal, AppTheme.Layout.screenPadding)
+
+            HStack(spacing: 4) {
+                Text("By continuing you agree to our")
+                    .foregroundStyle(AppTheme.secondaryLabel)
+                Link("Terms", destination: AppLegalLinks.termsOfUse)
+                    .foregroundStyle(AppTheme.brand)
+                Text("and")
+                    .foregroundStyle(AppTheme.secondaryLabel)
+                Link("Privacy", destination: AppLegalLinks.privacyPolicy)
+                    .foregroundStyle(AppTheme.brand)
+            }
+            .font(AppTheme.Typography.footnote)
+            .multilineTextAlignment(.center)
+            .padding(.horizontal, AppTheme.Layout.screenPadding)
 
             #if DEBUG
             Button("Continue with Google (wire SDK)") {
@@ -60,7 +74,8 @@ struct AuthView: View {
 
             Spacer()
         }
-        .padding()
+        .padding(.horizontal, AppTheme.Layout.screenPadding)
+        .padding(.vertical, AppTheme.Layout.screenPadding)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(AppTheme.background)
         .onAppear {

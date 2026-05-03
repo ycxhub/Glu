@@ -36,11 +36,13 @@ private enum PastelHex {
 enum AppTheme {
     enum Layout {
         static let screenPadding: CGFloat = 24
+        static let cardPadding: CGFloat = 20
         static let cardRadius: CGFloat = 16
         static let buttonRadius: CGFloat = 14
         static let optionRowPadding: CGFloat = 16
         static let minTap: CGFloat = 44
         static let historyGridGap: CGFloat = 3
+        static let historyCellRadius: CGFloat = 8
     }
 
     /// Calm teal — trust anchor, CTAs (`#0A7A6A`)
@@ -112,6 +114,7 @@ enum AppTheme {
     static let insightLavender = Color(PastelHex.lavender)
     static let celebrationBlush = Color(PastelHex.blush)
     static let seafoamAccent = Color(PastelHex.seafoam)
+    static let periwinkleAccent = Color(PastelHex.periwinkle)
 
     static let spikeLow = Color(PastelHex.spikeLow)
     static let spikeMedium = Color(PastelHex.spikeMedium)
@@ -278,6 +281,7 @@ struct MealResultDetailView: View {
                     confirmDelete = true
                 }
                 .frame(maxWidth: .infinity)
+                .frame(minHeight: AppTheme.Layout.minTap)
             }
             .padding(AppTheme.Layout.screenPadding)
         }
@@ -307,10 +311,10 @@ struct MealResultDetailView: View {
                         .lineLimit(2)
                         .minimumScaleFactor(0.85)
                 }
-                .padding(.horizontal, 12)
+                .padding(.horizontal, AppTheme.Layout.optionRowPadding)
                 .padding(.vertical, 8)
                 .background(Self.macroRowTint(for: r.0).opacity(0.38))
-                .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.buttonRadius, style: .continuous))
             }
         }
         .padding(AppTheme.Layout.optionRowPadding)

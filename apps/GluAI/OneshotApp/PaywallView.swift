@@ -41,16 +41,29 @@ struct PaywallView: View {
                     Button("Try 5 meals first") {
                         dismissIntoFreeTier(source: "try_free")
                     }
-                    .font(AppTheme.Typography.subhead.weight(.medium))
-                    .padding(.vertical, 14)
-                    .padding(.horizontal, 24)
-                    .frame(maxWidth: .infinity)
+                    .buttonStyle(LibrarySecondaryButtonStyle())
+                    .frame(minHeight: AppTheme.Layout.minTap)
+                    .padding(.horizontal, AppTheme.Layout.screenPadding)
+                    .padding(.top, 8)
 
-                    Link("Terms of Use", destination: AppLegalLinks.termsOfUse)
-                        .font(AppTheme.Typography.caption)
-                    Link("Privacy Policy", destination: AppLegalLinks.privacyPolicy)
-                        .font(AppTheme.Typography.caption)
-                    Spacer().frame(height: 8)
+                    Button("Restore purchases") {
+                        Task {
+                            try? await sub.restorePurchases()
+                            if sub.isPremium { onUnlocked() }
+                        }
+                    }
+                    .font(AppTheme.Typography.subhead)
+                    .foregroundStyle(AppTheme.brand)
+                    .frame(minHeight: AppTheme.Layout.minTap)
+
+                    HStack(spacing: 16) {
+                        Link("Terms of Use", destination: AppLegalLinks.termsOfUse)
+                        Text("·").foregroundStyle(AppTheme.secondaryLabel)
+                        Link("Privacy Policy", destination: AppLegalLinks.privacyPolicy)
+                    }
+                    .font(AppTheme.Typography.caption)
+                    .foregroundStyle(AppTheme.secondaryLabel)
+                    .padding(.bottom, 8)
                 }
             } else {
                 offlineDevPaywall
@@ -145,7 +158,7 @@ struct PaywallView: View {
                 .font(AppTheme.Typography.footnote)
                 .foregroundStyle(AppTheme.secondaryLabel)
             }
-            .padding(24)
+            .padding(AppTheme.Layout.screenPadding)
         }
     }
 }

@@ -27,48 +27,50 @@ struct HomeView: View {
                             .font(AppTheme.Typography.subhead.weight(.medium))
                             .foregroundStyle(AppTheme.brand)
                             .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(14)
+                            .padding(AppTheme.Layout.optionRowPadding)
                             .background(AppTheme.surface)
                             .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
                             .accessibilityLabel("Free meal analyses remaining, \(appState.freeMealAnalysesRemaining) of 5")
                     }
 
-                    HStack(alignment: .top) {
-                        VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(alignment: .firstTextBaseline, spacing: 8) {
                             Text("\(meals.streakDays)")
                                 .font(AppTheme.Typography.display)
                                 .foregroundStyle(AppTheme.brand)
-                            Text("day logging streak")
-                                .font(AppTheme.Typography.subhead)
-                                .foregroundStyle(AppTheme.secondaryLabel)
-                        }
-                        Spacer()
-                        VStack(alignment: .trailing, spacing: 4) {
-                            Text("\(meals.todayMeals.count)")
-                                .font(AppTheme.Typography.display)
+                            Text("day streak")
+                                .font(AppTheme.Typography.headline)
                                 .foregroundStyle(AppTheme.label)
-                            Text("meals today")
-                                .font(AppTheme.Typography.subhead)
-                                .foregroundStyle(AppTheme.secondaryLabel)
                         }
+                        Text("\(meals.todayMeals.count) meals logged today")
+                            .font(AppTheme.Typography.subhead)
+                            .foregroundStyle(AppTheme.secondaryLabel)
                     }
-                    .padding(20)
+                    .padding(AppTheme.Layout.cardPadding)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(AppTheme.surface)
                     .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
+                    .accessibilityElement(children: .combine)
+                    .accessibilityLabel("\(meals.streakDays) day streak. \(meals.todayMeals.count) meals logged today.")
 
                     if !meals.todayMeals.isEmpty {
                         VStack(alignment: .leading, spacing: 12) {
-                            Text("Today’s estimates")
-                                .font(AppTheme.Typography.title2)
-                            HStack {
-                                todayStatLabel("Est. kcal", "\(todayCalories)")
-                                Spacer()
-                                todayStatLabel("Est. carbs", String(format: "%.0f g", todayCarbs))
+                            Text("Today's estimates")
+                                .font(AppTheme.Typography.headline)
+                            HStack(alignment: .firstTextBaseline, spacing: 16) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("\(todayCalories)")
+                                        .font(AppTheme.Typography.title)
+                                        .foregroundStyle(AppTheme.label)
+                                    Text("kcal \u{00b7} \(String(format: "%.0f", todayCarbs)) g carbs")
+                                        .font(AppTheme.Typography.caption)
+                                        .foregroundStyle(AppTheme.secondaryLabel)
+                                }
+                                Spacer(minLength: 0)
                             }
                             spikeDistributionRow
                         }
-                        .padding(20)
+                        .padding(AppTheme.Layout.cardPadding)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(AppTheme.dashboardSurface)
                         .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
@@ -77,12 +79,29 @@ struct HomeView: View {
                     insightCard
 
                     Text("Recent")
-                        .font(AppTheme.Typography.title2)
+                        .font(AppTheme.Typography.headline)
+                        .foregroundStyle(AppTheme.label)
+                        .padding(.top, 8)
 
-                    if meals.todayMeals.isEmpty {
-                        Text("Log your first meal from the Log tab.")
-                            .font(AppTheme.Typography.subhead)
-                            .foregroundStyle(AppTheme.secondaryLabel)
+                    if meals.todayMeals.isEmpty && meals.hasLoadedOnce {
+                        VStack(spacing: 16) {
+                            Text("Log your first meal")
+                                .font(AppTheme.Typography.title2)
+                                .foregroundStyle(AppTheme.label)
+                                .multilineTextAlignment(.center)
+                            Text("Snap a photo and Glu will estimate calories, macros, and spike-risk context.")
+                                .font(AppTheme.Typography.body)
+                                .foregroundStyle(AppTheme.secondaryLabel)
+                                .multilineTextAlignment(.center)
+                            Button("Open Camera") {
+                                appState.selectedMainTab = 1
+                            }
+                            .buttonStyle(PrimaryButtonStyle())
+                        }
+                        .padding(AppTheme.Layout.cardPadding)
+                        .frame(maxWidth: .infinity)
+                        .background(AppTheme.surface)
+                        .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
                     } else {
                         ForEach(meals.todayMeals.prefix(5)) { m in
                             Button {
@@ -94,10 +113,10 @@ struct HomeView: View {
                         }
                     }
                 }
-                .padding(24)
+                .padding(AppTheme.Layout.screenPadding)
             }
             .scrollContentBackground(.hidden)
-            .background(AppTheme.dashboardSurface)
+            .background(AppTheme.background)
             .navigationBarTitleDisplayMode(.inline)
             .sheet(item: $selectedMeal) { entry in
                 NavigationStack {
@@ -119,20 +138,9 @@ struct HomeView: View {
         }
     }
 
-    private func todayStatLabel(_ title: String, _ value: String) -> some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text(title)
-                .font(AppTheme.Typography.caption)
-                .foregroundStyle(AppTheme.secondaryLabel)
-            Text(value)
-                .font(AppTheme.Typography.title2)
-                .foregroundStyle(AppTheme.label)
-        }
-    }
-
     private var spikeDistributionRow: some View {
         let c = spikeCounts
-        return VStack(alignment: .leading, spacing: 6) {
+        return VStack(alignment: .leading, spacing: 8) {
             Text("Spike-risk labels today (educational)")
                 .font(AppTheme.Typography.caption)
                 .foregroundStyle(AppTheme.secondaryLabel)
@@ -154,8 +162,8 @@ struct HomeView: View {
     private func spikeChip(_ label: String, _ count: Int, _ color: Color) -> some View {
         Text("\(label) · \(count)")
             .font(AppTheme.Typography.caption.weight(.medium))
-            .padding(.horizontal, 10)
-            .padding(.vertical, 6)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 8)
             .background(color.opacity(0.2))
             .foregroundStyle(AppTheme.label)
             .clipShape(Capsule())
@@ -171,7 +179,7 @@ struct HomeView: View {
                 .foregroundStyle(AppTheme.secondaryLabel)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .padding(20)
+        .padding(AppTheme.Layout.cardPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppTheme.insightLavender.opacity(colorScheme == .dark ? 0.22 : 0.35))
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
@@ -236,7 +244,8 @@ private struct MealRowCard: View {
                     .resizable()
                     .scaledToFill()
                     .frame(width: 56, height: 56)
-                    .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.buttonRadius, style: .continuous))
+                    .accessibilityHidden(true)
             }
             VStack(alignment: .leading, spacing: 4) {
                 Text("\(entry.output.calories) kcal · \(entry.timeString)")
@@ -249,7 +258,7 @@ private struct MealRowCard: View {
             Spacer()
             SpikeRiskPill(risk: entry.output.spikeRisk)
         }
-        .padding(12)
+        .padding(AppTheme.Layout.optionRowPadding)
         .background(AppTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
         .accessibilityElement(children: .ignore)

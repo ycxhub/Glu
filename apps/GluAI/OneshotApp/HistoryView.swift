@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 
 struct HistoryView: View {
+    @Environment(AppState.self) private var appState
     @Bindable var meals: MealLogStore
     @State private var selected: MealEntry?
     @State private var entryToEdit: MealEntry?
@@ -15,12 +16,26 @@ struct HistoryView: View {
     var body: some View {
         NavigationStack {
             Group {
-                if meals.meals.isEmpty {
-                    ContentUnavailableView(
-                        "No meals yet",
-                        systemImage: "clock",
-                        description: Text("Saved meals from the Log tab appear here.")
-                    )
+                if meals.meals.isEmpty && meals.hasLoadedOnce {
+                    VStack(spacing: 16) {
+                        Spacer()
+                        Text("Your meal story starts here")
+                            .font(AppTheme.Typography.title2)
+                            .foregroundStyle(AppTheme.label)
+                            .multilineTextAlignment(.center)
+                        Text("Snap your next meal and we'll keep a private, spike-smart history right here.")
+                            .font(AppTheme.Typography.body)
+                            .foregroundStyle(AppTheme.secondaryLabel)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, AppTheme.Layout.screenPadding)
+                        Button("Log your first meal") {
+                            appState.selectedMainTab = 1
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+                        .padding(.horizontal, AppTheme.Layout.screenPadding)
+                        Spacer()
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ScrollView {
                         LazyVGrid(columns: columns, spacing: AppTheme.Layout.historyGridGap) {
@@ -35,7 +50,7 @@ struct HistoryView: View {
                                 }
                             }
                         }
-                        .padding(.horizontal, AppTheme.Layout.historyGridGap)
+                        .padding(.horizontal, AppTheme.Layout.screenPadding)
                     }
                 }
             }
@@ -124,7 +139,7 @@ private struct HistoryGridCell: View {
                         } else {
                             Rectangle()
                                 .fill(AppTheme.brandMuted)
-                                .overlay { Image(systemName: "photo").foregroundStyle(AppTheme.brand) }
+                                .overlay { Image(systemName: "photo").foregroundStyle(AppTheme.brand).accessibilityHidden(true) }
                         }
                     }
                     .frame(width: side, height: side)
@@ -144,7 +159,7 @@ private struct HistoryGridCell: View {
                         }
                     }
 
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 4) {
                         Text("\(entry.output.calories)")
                             .font(AppTheme.Typography.caption.weight(.bold))
                             .foregroundStyle(.white)
@@ -152,8 +167,8 @@ private struct HistoryGridCell: View {
                             Text(spikeLetter)
                                 .font(AppTheme.Typography.caption.weight(.heavy))
                                 .foregroundStyle(.white)
-                                .padding(.horizontal, 5)
-                                .padding(.vertical, 2)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
                                 .background(Capsule().fill(Color.black.opacity(reduceTransparency ? 0.5 : 0.35)))
                             Text("spike")
                                 .font(AppTheme.Typography.caption)
@@ -162,7 +177,7 @@ private struct HistoryGridCell: View {
                     }
                     .padding(8)
                 }
-                .clipShape(RoundedRectangle(cornerRadius: 4, style: .continuous))
+                .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.historyCellRadius, style: .continuous))
             }
             .aspectRatio(1, contentMode: .fit)
         }

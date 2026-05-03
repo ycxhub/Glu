@@ -45,8 +45,8 @@ enum OnboardingStepsLoader {
         .init(
             id: "welcome",
             kind: .welcome,
-            title: "Welcome to Oneshot",
-            subtitle: "Your personal companion for this template.",
+            title: "Welcome to Glu AI",
+            subtitle: "Your calm, educational companion for understanding meals and glucose.",
             options: nil,
             cta: "Get Started",
             allowEmptySelection: nil
@@ -54,25 +54,25 @@ enum OnboardingStepsLoader {
         .init(
             id: "goal",
             kind: .singleChoice,
-            title: "What is your main goal?",
+            title: "What brought you here?",
             subtitle: nil,
-            options: ["Lose weight", "Maintain", "Build habits"],
+            options: ["Understand my meals", "Track spike-risk context", "Build healthier habits"],
             cta: "Continue",
             allowEmptySelection: nil
         ),
         .init(
             id: "notify",
             kind: .notificationPriming,
-            title: "Stay on track",
-            subtitle: "We’ll nudge you at the right time.",
+            title: "Gentle reminders",
+            subtitle: "We'll send a quiet nudge so you remember to log meals.",
             options: nil,
-            cta: "Continue",
+            cta: "Enable reminders",
             allowEmptySelection: nil
         ),
         .init(
             id: "calculating",
             kind: .calculating,
-            title: "Creating your plan...",
+            title: "Building your plan…",
             subtitle: nil,
             options: nil,
             cta: "Continue",
@@ -82,7 +82,7 @@ enum OnboardingStepsLoader {
             id: "reveal",
             kind: .planReveal,
             title: "Your plan is ready",
-            subtitle: "A preview number for the template.",
+            subtitle: "Educational estimates only — not medical advice. Always follow your care team's plan.",
             options: nil,
             cta: "Save my plan",
             allowEmptySelection: nil
