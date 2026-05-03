@@ -58,10 +58,22 @@ struct CoreActionView: View {
                 }
 
                 if !canAnalyze {
-                    Text("You’ve used your free meal analyses. Subscribe to continue, or restore purchases.")
-                        .font(AppTheme.Typography.footnote)
-                        .foregroundStyle(AppTheme.secondaryLabel)
-                        .multilineTextAlignment(.center)
+                    VStack(spacing: 12) {
+                        Text("You've used your 5 free meal analyses.")
+                            .font(AppTheme.Typography.subhead)
+                            .foregroundStyle(AppTheme.label)
+                            .multilineTextAlignment(.center)
+                        Button("Continue with Glu Gold") {
+                            appState.refreshPhaseForAccess(
+                                staffRole: auth.staffRole,
+                                subscriptionAllowsAccess: subs.isPremium
+                            )
+                        }
+                        .buttonStyle(PrimaryButtonStyle())
+                    }
+                    .padding(AppTheme.Layout.cardPadding)
+                    .background(AppTheme.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
                 }
 
                 VStack(spacing: 12) {
@@ -146,6 +158,7 @@ struct CoreActionView: View {
                         envelope: session.envelope,
                         imageData: session.imageData,
                         onSave: { saved in
+                            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                             let mergedEnv = session.envelope?.updatingUserEstimate(saved)
                                 ?? GluMealEnvelope.legacy(from: saved)
                             let thumb = session.imageData.flatMap { UIImage(data: $0)?.jpegData(compressionQuality: 0.5) }
@@ -176,6 +189,7 @@ struct CoreActionView: View {
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
                             Button("Close") { estimateSession = nil }
+                                .accessibilityHint("Dismisses the estimate without saving")
                         }
                     }
                 }
@@ -395,7 +409,7 @@ struct GluMealEstimateSheet: View {
                 }
 
                 if let env = envelope {
-                    VStack(alignment: .leading, spacing: 10) {
+                    VStack(alignment: .leading, spacing: 8) {
                         Text("Spike lesson")
                             .font(AppTheme.Typography.headline)
                         SpikeRiskPill(risk: env.spike_lesson.risk_band)
@@ -406,15 +420,19 @@ struct GluMealEstimateSheet: View {
                             .font(AppTheme.Typography.body)
                             .foregroundStyle(AppTheme.secondaryLabel)
                     }
-                    .padding(12)
+                    .padding(AppTheme.Layout.optionRowPadding)
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .background(AppTheme.dashboardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
                 }
 
-                HStack {
+                HStack(alignment: .firstTextBaseline) {
                     Text("\(draft.calories) kcal")
                         .font(AppTheme.Typography.display)
                         .foregroundStyle(AppTheme.brand)
+                    Text(String(format: "%.0f%% conf", draft.confidence * 100))
+                        .font(AppTheme.Typography.caption)
+                        .foregroundStyle(AppTheme.secondaryLabel)
+                        .accessibilityLabel(String(format: "Confidence %.0f percent", draft.confidence * 100))
                     Spacer()
                     SpikeRiskPill(risk: draft.spikeRisk)
                 }
@@ -422,15 +440,13 @@ struct GluMealEstimateSheet: View {
 
                 macroGrid
 
-                Text(String(format: "Confidence: %.0f%%", draft.confidence * 100))
-                    .font(AppTheme.Typography.caption)
-                    .foregroundStyle(AppTheme.secondaryLabel)
+
 
                 if showNoFoodHint {
                     Text(GluMealAnalysisUserCopy.noFoodDetected)
                         .font(AppTheme.Typography.footnote)
                         .foregroundStyle(AppTheme.secondaryLabel)
-                        .padding(12)
+                        .padding(AppTheme.Layout.optionRowPadding)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(AppTheme.dashboardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
                         .accessibilityLabel(GluMealAnalysisUserCopy.noFoodDetected)
@@ -438,17 +454,20 @@ struct GluMealEstimateSheet: View {
                     Text(GluMealAnalysisUserCopy.lowConfidenceEstimate)
                         .font(AppTheme.Typography.footnote)
                         .foregroundStyle(AppTheme.secondaryLabel)
-                        .padding(12)
+                        .padding(AppTheme.Layout.optionRowPadding)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(AppTheme.dashboardSurface, in: RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
                         .accessibilityLabel(GluMealAnalysisUserCopy.lowConfidenceEstimate)
                 }
 
-                Text(draft.rationale)
-                    .font(AppTheme.Typography.body)
-                Text(draft.disclaimer)
-                    .font(AppTheme.Typography.footnote)
-                    .foregroundStyle(AppTheme.secondaryLabel)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(draft.rationale)
+                        .font(AppTheme.Typography.body)
+                    Text(draft.disclaimer)
+                        .font(AppTheme.Typography.footnote)
+                        .foregroundStyle(AppTheme.secondaryLabel)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
                 if mode == .summary {
                     assumptionsSection(readOnly: true)
@@ -470,6 +489,7 @@ struct GluMealEstimateSheet: View {
                             onDiscard()
                         }
                     }
+                    .buttonStyle(LibrarySecondaryButtonStyle())
                 } else {
                     Button("Apply edits") {
                         draft.recomputeTotalsFromLineItems()
@@ -516,9 +536,9 @@ struct GluMealEstimateSheet: View {
                 .minimumScaleFactor(0.85)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(10)
+        .padding(12)
         .background(macroKeyTint(k).opacity(k == "Items" ? 0.28 : 0.38))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.buttonRadius, style: .continuous))
     }
 
     private func macroKeyTint(_ key: String) -> Color {
@@ -595,10 +615,12 @@ private struct MealLineEditCard: View {
                         .textFieldStyle(.roundedBorder)
                 }
                 Button("Remove item", role: .destructive, action: onRemove)
-                    .font(AppTheme.Typography.caption)
+                    .font(AppTheme.Typography.footnote)
+                    .frame(minHeight: AppTheme.Layout.minTap)
+                    .accessibilityLabel("Remove \(item.name.isEmpty ? "item" : item.name)")
             }
         }
-        .padding(12)
+        .padding(AppTheme.Layout.optionRowPadding)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(AppTheme.surface)
         .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))

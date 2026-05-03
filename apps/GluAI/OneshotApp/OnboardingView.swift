@@ -52,13 +52,13 @@ struct OnboardingView: View {
                 if !vm.steps.isEmpty {
                     ProgressView(value: Double(vm.index + 1), total: Double(vm.steps.count))
                         .tint(AppTheme.brand)
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, AppTheme.Layout.screenPadding)
                         .padding(.top, 8)
                     Text("Step \(vm.index + 1) of \(vm.steps.count)")
                         .font(AppTheme.Typography.caption)
                         .foregroundStyle(AppTheme.secondaryLabel)
-                        .padding(.horizontal, 24)
-                        .padding(.bottom, 4)
+                        .padding(.horizontal, AppTheme.Layout.screenPadding)
+                        .padding(.bottom, 8)
                 }
 
                 if let step = vm.current {
@@ -202,26 +202,23 @@ private struct OnboardingStepContent: View {
             case .info:
                 EmptyView()
             case .notificationPriming:
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(AppTheme.surface)
-                    .frame(height: 72)
-                    .overlay {
-                        HStack(alignment: .center, spacing: 12) {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("Glu AI")
-                                    .font(.caption.weight(.semibold))
-                                    .foregroundStyle(AppTheme.secondaryLabel)
-                                Text("Quick lunch log?")
-                                    .font(AppTheme.Typography.subhead)
-                            }
-                            Spacer(minLength: 0)
-                            Image(systemName: "camera.fill")
-                                .font(.title3)
-                                .foregroundStyle(AppTheme.brand.opacity(0.85))
-                                .accessibilityHidden(true)
-                        }
-                        .padding(.horizontal, 16)
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Sample reminder")
+                        .font(AppTheme.Typography.caption)
+                        .foregroundStyle(AppTheme.secondaryLabel)
+                    HStack(alignment: .firstTextBaseline, spacing: 12) {
+                        Text("Glu AI")
+                            .font(AppTheme.Typography.footnote.weight(.semibold))
+                            .foregroundStyle(AppTheme.secondaryLabel)
+                        Text("Quick lunch log?")
+                            .font(AppTheme.Typography.subhead)
+                            .foregroundStyle(AppTheme.label)
                     }
+                    .padding(AppTheme.Layout.optionRowPadding)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .background(AppTheme.surface)
+                    .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous))
+                }
                 Button("Maybe later") {
                     onSkipNotifications()
                 }
@@ -230,7 +227,7 @@ private struct OnboardingStepContent: View {
                 .frame(maxWidth: .infinity, alignment: .leading)
             case .calculating:
                 ProgressView()
-                    .scaleEffect(1.4)
+                    .controlSize(.large)
                     .tint(AppTheme.brand)
                 Text(calculatingLines[calculatingLineIndex % calculatingLines.count])
                     .font(AppTheme.Typography.subhead)
@@ -281,7 +278,7 @@ private struct OnboardingStepContent: View {
                 }
             }
         }
-        .padding(24)
+        .padding(AppTheme.Layout.screenPadding)
         .onAppear {
             if let prev = vm.responses[step.id]?.first, step.kind == .singleChoice {
                 singleSelection = prev
@@ -367,16 +364,23 @@ private struct OnboardingStepContent: View {
                     .foregroundStyle(AppTheme.label)
                     .multilineTextAlignment(.leading)
                 Spacer()
-                if selected { Image(systemName: "checkmark.circle.fill").foregroundStyle(AppTheme.brand) }
+                if selected {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundStyle(AppTheme.brand)
+                        .accessibilityHidden(true)
+                }
             }
-            .padding(16)
+            .padding(AppTheme.Layout.optionRowPadding)
+            .frame(minHeight: AppTheme.Layout.minTap)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(selected ? AppTheme.brandMuted : AppTheme.surface)
-            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+            .clipShape(RoundedRectangle(cornerRadius: AppTheme.Layout.buttonRadius, style: .continuous))
             .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: AppTheme.Layout.buttonRadius, style: .continuous)
                     .stroke(selected ? AppTheme.brand.opacity(0.35) : Color.clear, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

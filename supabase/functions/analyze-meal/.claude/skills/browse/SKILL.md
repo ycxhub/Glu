@@ -1,0 +1,1 @@
+/Users/chaitanyay/.claude/skills/gstack/browse/SKILL.md

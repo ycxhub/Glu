@@ -277,6 +277,9 @@ struct MealEntry: Identifiable, Equatable {
 @Observable
 final class MealLogStore {
     private(set) var meals: [MealEntry] = []
+    /// True after the first remote load attempt finishes (success or failure).
+    /// Guards empty states so they don't flash while meals are syncing.
+    private(set) var hasLoadedOnce = false
 
     private var supabase: SupabaseClient?
     private var syncUserId: String?
@@ -288,7 +291,10 @@ final class MealLogStore {
 
     /// Loads meal history from `meal_logs` (newest first). Local-only rows stay until refreshed.
     func loadRemoteMeals() async {
-        guard let client = supabase, let uidStr = syncUserId, let uid = UUID(uuidString: uidStr) else { return }
+        guard let client = supabase, let uidStr = syncUserId, let uid = UUID(uuidString: uidStr) else {
+            await MainActor.run { hasLoadedOnce = true }
+            return
+        }
         do {
             let rows: [MealLogRow] = try await client
                 .from("meal_logs")
@@ -308,8 +314,10 @@ final class MealLogStore {
             }
             await MainActor.run {
                 meals = mapped
+                hasLoadedOnce = true
             }
         } catch {
+            await MainActor.run { hasLoadedOnce = true }
             #if DEBUG
             print("MealLogStore.loadRemoteMeals:", error)
             #endif
