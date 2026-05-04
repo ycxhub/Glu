@@ -1,0 +1,93 @@
+{
+  "identifier" : "B8C6D7C8-8D10-45F0-9E4D-2B845D9D7A8B",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+
+  ],
+  "settings" : {
+    "_applicationInternalID" : "com.ycxlabs.gluai",
+    "_failTransactionsEnabled" : false,
+    "_lastSynchronizedDate" : 767232000,
+    "_locale" : "en_US",
+    "_storefront" : "USA",
+    "_storeKitErrors" : [
+
+    ]
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "Glu Premium",
+      "localizations" : [
+        {
+          "description" : "Unlimited meal analysis and Glu Gold features.",
+          "displayName" : "Glu Gold",
+          "locale" : "en_US"
+        }
+      ],
+      "name" : "Glu Premium",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "59.99",
+          "familyShareable" : true,
+          "groupNumber" : 1,
+          "internalID" : "gluai.premium.annual",
+          "introductoryOffer" : {
+            "displayPrice" : "0",
+            "internalID" : "gluai.premium.annual.trial",
+            "numberOfPeriods" : 3,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "day"
+          },
+          "localizations" : [
+            {
+              "description" : "Unlimited meal analysis for one year.",
+              "displayName" : "Glu Gold Annual",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "gluai.premium.annual",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Glu Gold Annual",
+          "subscriptionGroupID" : "Glu Premium",
+          "type" : "RecurringSubscription"
+        },
+        {
+          "adHocOffers" : [
+
+          ],
+          "codeOffers" : [
+
+          ],
+          "displayPrice" : "9.99",
+          "familyShareable" : true,
+          "groupNumber" : 2,
+          "internalID" : "gluai.premium.monthly",
+          "localizations" : [
+            {
+              "description" : "Unlimited meal analysis for one month.",
+              "displayName" : "Glu Gold Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "gluai.premium.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Glu Gold Monthly",
+          "subscriptionGroupID" : "Glu Premium",
+          "type" : "RecurringSubscription"
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 4,
+    "minor" : 0
+  }
+}

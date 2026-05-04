@@ -1,4 +1,5 @@
 import RevenueCatUI
+import StoreKit
 import SwiftUI
 
 struct SettingsView: View {
@@ -7,8 +8,11 @@ struct SettingsView: View {
     @Bindable var auth: AuthController
     @Bindable var sub: RevenueCatSubscriptionService
     @State private var showDeleteConfirm = false
+    @State private var showManageSubscriptions = false
+    @State private var showNoRestoreAlert = false
     @State private var busyDelete = false
     @State private var err: String?
+    @State private var restoreInFlight = false
 
     private var revenueCatConfigured: Bool {
         guard let k = APIConfig.revenueCatAPIKey, !k.isEmpty, k != "REPLACE_ME" else { return false }
@@ -37,7 +41,7 @@ struct SettingsView: View {
                 }
                 Section("Subscription") {
                     HStack {
-                        Text("Glu Gold")
+                        Text(Entitlement.gluGold)
                             .font(AppTheme.Typography.body)
                         Spacer()
                         Text(appState.isPremium ? "Active" : "Inactive")
@@ -54,12 +58,11 @@ struct SettingsView: View {
                             .accessibilityLabel("Free mode, \(appState.freeMealAnalysesRemaining) meal analyses remaining")
                     }
                     Button("Restore purchases") {
-                        Task {
-                            try? await sub.restorePurchases()
-                            if sub.isPremium {
-                                appState.setPremiumUnlocked()
-                            }
-                        }
+                        restorePurchases()
+                    }
+                    .disabled(restoreInFlight)
+                    Button("Manage subscription") {
+                        showManageSubscriptions = true
                     }
                     if revenueCatConfigured {
                         NavigationLink("Subscription & billing help") {
@@ -133,6 +136,36 @@ struct SettingsView: View {
             Text(
                 "This permanently deletes your Supabase account and associated meal logs. Subscriptions are managed in the App Store; cancel renewal there if needed."
             )
+        }
+        .alert("No previous purchase found", isPresented: $showNoRestoreAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("No previous purchase was found on this Apple ID. Make sure you're signed in with the same Apple ID you used to subscribe.")
+        }
+        .manageSubscriptionsSheet(isPresented: $showManageSubscriptions)
+    }
+
+    private func restorePurchases() {
+        guard !restoreInFlight else { return }
+        restoreInFlight = true
+        Task {
+            defer { restoreInFlight = false }
+            do {
+                let outcome = try await sub.restorePurchases()
+                switch outcome {
+                case .restoredEntitlement:
+                    appState.setPremiumUnlocked()
+                case .noEntitlementFound:
+                    showNoRestoreAlert = true
+                }
+            } catch {
+                switch PaywallUserError(from: error) {
+                case .silent:
+                    err = nil
+                case .message(let message):
+                    err = message
+                }
+            }
         }
     }
 

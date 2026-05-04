@@ -1,0 +1,9 @@
+custom_rules:
+  no_raw_glu_gold_literal:
+    regex: '"Glu Gold"|"glu_gold"'
+    match_kinds:
+      - string
+    excluded:
+      - ".*/Entitlement\\.swift$"
+    message: "Use Entitlement.gluGold or Entitlement.gluGoldSlug instead."
+    severity: error

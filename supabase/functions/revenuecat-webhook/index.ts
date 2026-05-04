@@ -1,5 +1,6 @@
 import "@supabase/functions-js/edge-runtime.d.ts";
 import { createClient } from "@supabase/supabase-js";
+import { GLU_GOLD_ENTITLEMENT } from "../_shared/entitlements.ts";
 
 const corsHeaders: Record<string, string> = {
   "Access-Control-Allow-Origin": "*",
@@ -7,8 +8,6 @@ const corsHeaders: Record<string, string> = {
     "authorization, x-client-info, apikey, content-type, x-revenuecat-signature",
   "Access-Control-Allow-Methods": "POST, OPTIONS",
 };
-
-const DEFAULT_ENTITLEMENT = "Glu Gold";
 
 function json(status: number, body: Record<string, unknown>): Response {
   return new Response(JSON.stringify(body), {
@@ -19,12 +18,24 @@ function json(status: number, body: Record<string, unknown>): Response {
 
 function verifyAuth(req: Request): boolean {
   const expected = Deno.env.get("REVENUECAT_WEBHOOK_AUTH")?.trim();
-  if (!expected) {
-    console.error("revenuecat-webhook: REVENUECAT_WEBHOOK_AUTH not set");
+  if (!expected || expected.length < 32) {
+    console.error("revenuecat-webhook: REVENUECAT_WEBHOOK_AUTH missing or too short");
     return false;
   }
   const got = req.headers.get("Authorization")?.trim() ?? "";
-  return got === expected;
+  return constantTimeEqual(got, expected);
+}
+
+function constantTimeEqual(a: string, b: string): boolean {
+  const enc = new TextEncoder();
+  const left = enc.encode(a);
+  const right = enc.encode(b);
+  const len = Math.max(left.length, right.length);
+  let diff = left.length ^ right.length;
+  for (let i = 0; i < len; i += 1) {
+    diff |= (left[i] ?? 0) ^ (right[i] ?? 0);
+  }
+  return diff === 0;
 }
 
 type RCEvent = {
@@ -34,6 +45,8 @@ type RCEvent = {
   entitlement_ids?: string[];
   expiration_at_ms?: number;
   product_id?: string;
+  transferred_from?: string[];
+  transferred_to?: string[];
 };
 
 type RCPayload = {
@@ -55,26 +68,27 @@ function parseUuid(s: string): string | null {
 function deriveActiveAndExpiry(
   eventType: string,
   expirationAtMs?: number,
-): { is_active: boolean; expires_at: string | null } {
+): { is_active: boolean; expires_at: string | null; will_renew: boolean } {
   const t = (eventType || "").toUpperCase();
-  if (t === "EXPIRATION" || t === "BILLING_ISSUE") {
-    return { is_active: false, expires_at: null };
+  if (t === "EXPIRATION") {
+    return { is_active: false, expires_at: null, will_renew: false };
   }
   if (expirationAtMs && Number.isFinite(expirationAtMs)) {
     const d = new Date(expirationAtMs);
     const iso = d.toISOString();
-    if (t === "CANCELLATION") {
-      return { is_active: true, expires_at: iso };
+    if (t === "CANCELLATION" || t === "SUBSCRIPTION_PAUSED" || t === "BILLING_ISSUE") {
+      return { is_active: true, expires_at: iso, will_renew: false };
     }
-    return { is_active: true, expires_at: iso };
+    return { is_active: true, expires_at: iso, will_renew: true };
   }
   if (
     t === "INITIAL_PURCHASE" || t === "RENEWAL" || t === "UNCANCELLATION" ||
-    t === "NON_RENEWING_PURCHASE" || t === "PRODUCT_CHANGE" || t === "TEST"
+    t === "NON_RENEWING_PURCHASE" || t === "PRODUCT_CHANGE" || t === "TEST" ||
+    t === "SUBSCRIBER_ALIAS" || t === "TRANSFER"
   ) {
-    return { is_active: true, expires_at: null };
+    return { is_active: true, expires_at: null, will_renew: true };
   }
-  return { is_active: false, expires_at: null };
+  return { is_active: false, expires_at: null, will_renew: false };
 }
 
 Deno.serve(async (req) => {
@@ -108,11 +122,11 @@ Deno.serve(async (req) => {
   }
 
   const entitlementIds = ev.entitlement_ids ?? [];
-  const entitlementId = entitlementIds.includes(DEFAULT_ENTITLEMENT)
-    ? DEFAULT_ENTITLEMENT
-    : (entitlementIds[0] ?? DEFAULT_ENTITLEMENT);
+  const entitlementId = entitlementIds.includes(GLU_GOLD_ENTITLEMENT)
+    ? GLU_GOLD_ENTITLEMENT
+    : (entitlementIds[0] ?? GLU_GOLD_ENTITLEMENT);
 
-  const { is_active, expires_at } = deriveActiveAndExpiry(
+  const { is_active, expires_at, will_renew } = deriveActiveAndExpiry(
     ev.type ?? "",
     ev.expiration_at_ms,
   );
@@ -128,6 +142,56 @@ Deno.serve(async (req) => {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
+  if (ev.id) {
+    const { data: duplicate, error: dupError } = await admin
+      .from("revenuecat_entitlements")
+      .select("user_id")
+      .eq("last_event_id", ev.id)
+      .maybeSingle();
+    if (dupError) {
+      console.error("revenuecat duplicate lookup", dupError);
+      return json(500, { error: "duplicate_lookup_failed" });
+    }
+    if (duplicate) {
+      console.info("revenuecat-webhook: duplicate event", ev.id);
+      return json(200, { ok: true, duplicate: true });
+    }
+  }
+
+  const { data: existing, error: existingError } = await admin
+    .from("revenuecat_entitlements")
+    .select("expires_at")
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (existingError) {
+    console.error("revenuecat existing lookup", existingError);
+    return json(500, { error: "existing_lookup_failed" });
+  }
+  if (existing?.expires_at && expires_at) {
+    const currentExpiry = Date.parse(existing.expires_at);
+    const incomingExpiry = Date.parse(expires_at);
+    if (Number.isFinite(currentExpiry) && Number.isFinite(incomingExpiry) && incomingExpiry < currentExpiry) {
+      console.info("revenuecat-webhook: stale event ignored", ev.id ?? "missing_event_id");
+      return json(200, { ok: true, stale: true });
+    }
+  }
+
+  if ((ev.type ?? "").toUpperCase() === "TRANSFER") {
+    for (const source of ev.transferred_from ?? []) {
+      const sourceUserId = parseUuid(source);
+      if (!sourceUserId) continue;
+      await admin.from("revenuecat_entitlements")
+        .update({
+          is_active: false,
+          will_renew: false,
+          last_event_id: ev.id ?? null,
+          payload: body as unknown as Record<string, unknown>,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("user_id", sourceUserId);
+    }
+  }
+
   const { error } = await admin.from("revenuecat_entitlements").upsert(
     {
       user_id: userId,
@@ -135,6 +199,7 @@ Deno.serve(async (req) => {
       entitlement_id: entitlementId,
       is_active,
       expires_at,
+      will_renew,
       last_event_id: ev.id ?? null,
       payload: body as unknown as Record<string, unknown>,
       updated_at: new Date().toISOString(),
@@ -175,6 +240,7 @@ Deno.serve(async (req) => {
               entitlement_id: entitlementId,
               is_active: stillActive,
               expires_at: expires.toISOString(),
+              will_renew: ent.will_renew ?? stillActive,
               last_event_id: ev.id ?? null,
               payload: sub as unknown as Record<string, unknown>,
               updated_at: new Date().toISOString(),

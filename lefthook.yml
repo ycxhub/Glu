@@ -1,0 +1,6 @@
+pre-commit:
+  commands:
+    gluai-entitlement-gates:
+      run: |
+        ! git grep -nE '"Glu Gold"|"glu_gold"' -- 'supabase/functions/*.ts' 'supabase/functions/**/*.ts' ':(exclude)supabase/functions/_shared/entitlements.ts'
+        ! git grep -nE "'Glu Gold'|'glu_gold'" -- 'supabase/migrations/*.sql' ':(exclude)supabase/migrations/20260503120000_glu_quota_entitlements_envelope.sql' ':(exclude)supabase/migrations/20260504000000_entitlement_helper.sql'

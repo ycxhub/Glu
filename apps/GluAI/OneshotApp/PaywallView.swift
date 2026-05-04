@@ -13,7 +13,9 @@ struct PaywallView: View {
     var analytics: NoopAnalytics
 
     @State private var err: String?
-    @State private var isRestoring = false
+    @State private var inFlight = false
+    @State private var showNoRestoreAlert = false
+    @State private var trackedResolved = false
 
     private var useRevenueCatUI: Bool {
         guard let k = APIConfig.revenueCatAPIKey, !k.isEmpty, k != "REPLACE_ME" else { return false }
@@ -32,29 +34,28 @@ struct PaywallView: View {
                             handleCustomerInfo(customerInfo, source: "restore")
                         }
                         .onPurchaseFailure { error in
-                            err = error.localizedDescription
+                            show(error)
                         }
                         .onRequestedDismissal {
                             dismissIntoFreeTier(source: "close")
                         }
 
-                    Button("Try 5 meals first") {
+                    Button("Try \(APIConfig.freeTierQuota) meals first") {
                         dismissIntoFreeTier(source: "try_free")
                     }
                     .buttonStyle(LibrarySecondaryButtonStyle())
+                    .disabled(inFlight)
                     .frame(minHeight: AppTheme.Layout.minTap)
                     .padding(.horizontal, AppTheme.Layout.screenPadding)
                     .padding(.top, 8)
 
                     Button("Restore purchases") {
-                        Task {
-                            try? await sub.restorePurchases()
-                            if sub.isPremium { onUnlocked() }
-                        }
+                        restore()
                     }
                     .font(AppTheme.Typography.subhead)
                     .foregroundStyle(AppTheme.brand)
                     .frame(minHeight: AppTheme.Layout.minTap)
+                    .disabled(inFlight)
 
                     HStack(spacing: 16) {
                         Link("Terms of Use", destination: AppLegalLinks.termsOfUse)
@@ -87,7 +88,20 @@ struct PaywallView: View {
                     "ui": useRevenueCatUI ? "revenuecat_ui" : "offline_dev",
                 ]
             )
+            if sub.isResolved {
+                trackResolvedIfNeeded()
+            }
             Task { await sub.preparePaywall() }
+        }
+        .onChange(of: sub.isResolved) { _, resolved in
+            if resolved {
+                trackResolvedIfNeeded()
+            }
+        }
+        .alert("No previous purchase found", isPresented: $showNoRestoreAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text("No previous purchase was found on this Apple ID. Make sure you're signed in with the same Apple ID you used to subscribe.")
         }
     }
 
@@ -98,7 +112,8 @@ struct PaywallView: View {
             "rc_customer_info",
             properties: [
                 "source": source,
-                "glu_gold": sub.isPremium ? "1" : "0",
+                "entitlement_id": Entitlement.gluGold,
+                "entitlement_active": sub.isPremium ? "1" : "0",
                 "trial": sub.isInTrialPeriod ? "1" : "0",
             ]
         )
@@ -110,7 +125,7 @@ struct PaywallView: View {
     /// PRD: honest dismiss — enter **free mode** with 5 analyses (no silent sign-out).
     private func dismissIntoFreeTier(source: String) {
         analytics.track("paywall_dismissed", properties: ["via": source])
-        appState.enterFreeTierQuota(5, staffRole: auth.staffRole, subscriptionAllowsAccess: sub.isPremium)
+        appState.enterFreeTierQuota(APIConfig.freeTierQuota, staffRole: auth.staffRole, subscriptionAllowsAccess: sub.isPremium)
     }
 
     /// Minimal fallback when `REVENUECAT_API_KEY` is missing (Simulator / CI).
@@ -126,26 +141,36 @@ struct PaywallView: View {
 
                 Button("Unlock locally (QA)") {
                     Task {
-                        try? await sub.purchaseSelectedPlan(annualPreferred: true)
-                        if sub.isPremium { onUnlocked() }
+                        inFlight = true
+                        defer { inFlight = false }
+                        do {
+                            try await sub.purchaseSelectedPlan(annualPreferred: true)
+                            if sub.isPremium { onUnlocked() }
+                        } catch {
+                            show(error)
+                        }
                     }
                 }
                 .buttonStyle(PrimaryButtonStyle())
+                .disabled(inFlight)
 
-                Button("Try 5 meals first") {
+                Button("Try \(APIConfig.freeTierQuota) meals first") {
                     dismissIntoFreeTier(source: "try_free_dev")
                 }
                 .font(AppTheme.Typography.subhead)
+                .disabled(inFlight)
 
                 Button("Restore purchases") {
-                    isRestoring = true
-                    Task {
-                        try? await sub.restorePurchases()
-                        if sub.isPremium { onUnlocked() }
-                        isRestoring = false
-                    }
+                    restore()
                 }
-                .disabled(isRestoring)
+                .disabled(inFlight)
+
+                Button("Have a code?") {
+                    Task { await sub.presentCodeRedemptionSheet() }
+                }
+                .font(AppTheme.Typography.footnote)
+                .foregroundStyle(AppTheme.brand)
+                .disabled(inFlight)
 
                 Button("Sign out") {
                     Task {
@@ -160,5 +185,49 @@ struct PaywallView: View {
             }
             .padding(AppTheme.Layout.screenPadding)
         }
+    }
+
+    private func restore() {
+        guard !inFlight else { return }
+        inFlight = true
+        err = nil
+        analytics.track("restore_started", properties: nil)
+        Task {
+            defer { inFlight = false }
+            do {
+                let outcome = try await sub.restorePurchases()
+                switch outcome {
+                case .restoredEntitlement:
+                    analytics.track("restore_succeeded", properties: ["entitlement_active": "1"])
+                    onUnlocked()
+                case .noEntitlementFound:
+                    analytics.track("restore_no_entitlement_found", properties: nil)
+                    showNoRestoreAlert = true
+                }
+            } catch {
+                show(error)
+            }
+        }
+    }
+
+    private func show(_ error: Error) {
+        switch PaywallUserError(from: error) {
+        case .silent:
+            err = nil
+        case .message(let message):
+            err = message
+        }
+    }
+
+    private func trackResolvedIfNeeded() {
+        guard !trackedResolved else { return }
+        trackedResolved = true
+        analytics.track(
+            "paywall_resolved",
+            properties: [
+                "eligible_for_trial": sub.isInTrialPeriod ? "1" : "0",
+                "selected_package_default": "annual",
+            ]
+        )
     }
 }
