@@ -4,11 +4,13 @@ import Supabase
 struct AppRootView: View {
     @Environment(AppState.self) private var appState
     @Environment(NoopAnalytics.self) private var analytics
+    @Environment(\.scenePhase) private var scenePhase
     @State private var auth = AuthController()
     @State private var api = APIClient()
     @State private var subs = RevenueCatSubscriptionService()
     @State private var mealStore = MealLogStore()
     @State private var supabaseClient: SupabaseClient? = APIConfig.makeSupabaseClient()
+    @State private var paywallResolutionTimedOut = false
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
@@ -26,14 +28,20 @@ struct AppRootView: View {
                         }
                     )
                 case .paywall:
-                    PaywallView(
-                        sub: subs,
-                        onUnlocked: {
-                            appState.setPremiumUnlocked()
-                            analytics.track("trial_started", properties: ["product_id": "rc"])
-                        },
-                        analytics: analytics
-                    )
+                    if !subs.isResolved && !paywallResolutionTimedOut {
+                        PaywallResolvingView {
+                            paywallResolutionTimedOut = true
+                        }
+                    } else {
+                        PaywallView(
+                            sub: subs,
+                            onUnlocked: {
+                                appState.setPremiumUnlocked()
+                                analytics.track("trial_started", properties: ["product_id": "rc"])
+                            },
+                            analytics: analytics
+                        )
+                    }
                 case .main:
                     MainTabView(
                         auth: auth,
@@ -68,8 +76,25 @@ struct AppRootView: View {
                 subscriptionAllowsAccess: active
             )
         }
+        .onChange(of: subs.isResolved) { _, resolved in
+            if resolved {
+                paywallResolutionTimedOut = false
+            }
+        }
         .onChange(of: auth.userId) { _, newId in
             mealStore.configureSync(client: supabaseClient, userId: newId)
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+            Task {
+                await subs.refreshCustomerInfo()
+                appState.applyAccessRouting(
+                    onboardingCompleted: appState.isOnboardingCompleted,
+                    signedIn: auth.isSignedIn,
+                    staffRole: auth.staffRole,
+                    subscriptionAllowsAccess: subs.isPremium
+                )
+            }
         }
     }
 
@@ -139,5 +164,37 @@ struct AppRootView: View {
             staffRole: auth.staffRole,
             subscriptionAllowsAccess: subs.isPremium
         )
+    }
+}
+
+private struct PaywallResolvingView: View {
+    @State private var showFallback = false
+    var onTimeout: () -> Void
+
+    var body: some View {
+        VStack(spacing: 16) {
+            RoundedRectangle(cornerRadius: AppTheme.Layout.cardRadius, style: .continuous)
+                .fill(AppTheme.brandMuted)
+                .frame(width: 96, height: 96)
+                .overlay {
+                    ProgressView()
+                        .tint(AppTheme.brand)
+                }
+            Text(showFallback ? "Loading your subscription options" : "Checking your Glu Gold status")
+                .font(AppTheme.Typography.headline)
+                .foregroundStyle(AppTheme.label)
+            Text("This keeps subscribed accounts from seeing a paywall flash.")
+                .font(AppTheme.Typography.footnote)
+                .foregroundStyle(AppTheme.secondaryLabel)
+                .multilineTextAlignment(.center)
+        }
+        .padding(AppTheme.Layout.screenPadding)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(AppTheme.background)
+        .task {
+            try? await Task.sleep(nanoseconds: 1_500_000_000)
+            showFallback = true
+            onTimeout()
+        }
     }
 }

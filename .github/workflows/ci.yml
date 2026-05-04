@@ -1,0 +1,38 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+  gluai-ios:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: SwiftLint
+        run: |
+          brew install swiftlint
+          swiftlint --config .swiftlint.yml apps/GluAI/OneshotApp
+
+      - name: Entitlement literal gates
+        run: |
+          ! git grep -nE '"Glu Gold"|"glu_gold"' -- 'supabase/functions/*.ts' 'supabase/functions/**/*.ts' ':(exclude)supabase/functions/_shared/entitlements.ts'
+          ! git grep -nE "'Glu Gold'|'glu_gold'" -- 'supabase/migrations/*.sql' ':(exclude)supabase/migrations/20260503120000_glu_quota_entitlements_envelope.sql' ':(exclude)supabase/migrations/20260504000000_entitlement_helper.sql'
+
+      - name: Build and test
+        run: |
+          SIMULATOR="$(xcrun simctl list devices available | awk -F '[()]' '/iPhone 17|iPhone 16|iPhone 15/ {gsub(/^[ \t]+|[ \t]+$/, "", $1); print $1; exit}')"
+          if [ -z "$SIMULATOR" ]; then
+            echo "No available iPhone simulator found"
+            xcrun simctl list devices available
+            exit 1
+          fi
+          echo "Using simulator: $SIMULATOR"
+          xcodebuild test \
+            -project apps/GluAI/OneshotApp.xcodeproj \
+            -scheme OneshotApp \
+            -destination "platform=iOS Simulator,name=$SIMULATOR"

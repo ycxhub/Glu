@@ -1,5 +1,6 @@
 import Testing
 import Foundation
+import RevenueCat
 @testable import Glu_AI
 
 // MARK: - AppState Phase Routing Tests
@@ -280,6 +281,40 @@ struct AccessEvaluatorTests {
             choseFreeTier: false,
             freeMealAnalysesRemaining: 0
         ) == false)
+    }
+}
+
+// MARK: - Paywall error copy tests
+
+@Suite("PaywallUserError mapping")
+struct PaywallUserErrorTests {
+    @Test("Purchase cancellation is silent")
+    func purchaseCancellationIsSilent() {
+        #expect(PaywallUserError(from: ErrorCode.purchaseCancelledError) == .silent)
+    }
+
+    @Test("Network errors show retry copy")
+    func networkErrorShowsRetryCopy() {
+        #expect(PaywallUserError(from: ErrorCode.networkError) == .message("Connection issue. Try again."))
+    }
+
+    @Test("Payment pending names approval state")
+    func paymentPendingNamesApprovalState() {
+        #expect(PaywallUserError(from: ErrorCode.paymentPendingError) == .message("Waiting for approval."))
+    }
+
+    @Test("Receipt collision explains linked account")
+    func receiptCollisionExplainsLinkedAccount() {
+        #expect(
+            PaywallUserError(from: ErrorCode.receiptAlreadyInUseError) ==
+                .message("This Apple ID is already linked to another Glu account.")
+        )
+    }
+
+    @Test("Non-RevenueCat errors use generic recovery copy")
+    func genericErrorsUseGenericCopy() {
+        let error = NSError(domain: "GluAITests", code: 1)
+        #expect(PaywallUserError(from: error) == .message("Something went wrong. Please try again."))
     }
 }
 

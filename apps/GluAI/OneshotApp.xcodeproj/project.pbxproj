@@ -13,12 +13,16 @@
 		20A48694C749432D81914843 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D22A6A84373741C881EAD1BA /* OnboardingViewModel.swift */; };
 		29B111E52C0347CDB058941E /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CAE207C863B4548AEA1EF2C /* PaywallView.swift */; };
 		3B7B74D572B04CAD82F81764 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 120CD3C862D744C98C240ABA /* SettingsView.swift */; };
+		4467E1AF90AF4B2E8B4E5001 /* Entitlement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4467E1AF90AF4B2E8B4E5000 /* Entitlement.swift */; };
+		4467E1AF90AF4B2E8B4E5003 /* RCErrorMapping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4467E1AF90AF4B2E8B4E5002 /* RCErrorMapping.swift */; };
+		4467E1AF90AF4B2E8B4E5005 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 4467E1AF90AF4B2E8B4E5004 /* PrivacyInfo.xcprivacy */; };
 		5034941421F54D79B41E303 /* GluAccess.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5034941421F54D79B41E300 /* GluAccess.swift */; };
 		5034941421F54D79B41E304 /* RevenueCatSubscriptionService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5034941421F54D79B41E301 /* RevenueCatSubscriptionService.swift */; };
 		5034941421F54D79B41E305 /* DevNavigatorOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5034941421F54D79B41E302 /* DevNavigatorOverlay.swift */; };
 		5034941421F54D79B41E306 /* Supabase in Frameworks */ = {isa = PBXBuildFile; productRef = 5034941421F54D79B41E310 /* Supabase */; };
 		5034941421F54D79B41E307 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 5034941421F54D79B41E311 /* RevenueCat */; };
 		5034941421F54D79B41E308 /* RevenueCatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 5034941421F54D79B41E314 /* RevenueCatUI */; };
+		5292EAF03FFD49A08CD13209 /* DashboardSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BD73E43308871D50AC10C6F /* DashboardSnapshotTests.swift */; };
 		5851792D6E184843B6F4F290 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD32A1E204A54420926A254D /* AppState.swift */; };
 		5AC8F8A39D754C4081D49ED0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */; };
 		6F9C2B1A4E7C43A3A0E7F0C1 /* onboarding_steps.json in Resources */ = {isa = PBXBuildFile; fileRef = 6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */; };
@@ -29,9 +33,12 @@
 		8FABBFC78E059D62B9CCDBB4 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E29B0C4E8AB054D013BCA169 /* Foundation.framework */; };
 		9C479623027E4855A2E74ADB /* CoreActionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE64CF01BE0D4ABEA105BEF4 /* CoreActionView.swift */; };
 		A3287781ABA0493DBAEF7CF6 /* OnboardingStepDefinition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F7465DD9681438FA2C6A11A /* OnboardingStepDefinition.swift */; };
+		B5306898DE93D18252BE32B9 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E29B0C4E8AB054D013BCA169 /* Foundation.framework */; };
 		B59D5F7CEF9F45338A40612D /* OnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C165E7444C3247178FA0BAFA /* OnboardingView.swift */; };
 		E4BC017B5695C1237C700354 /* AppStateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41E0D3D63340B99E1CD93FB7 /* AppStateTests.swift */; };
 		E605CE40514F4BDFA36AAC15 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E18F8FB2B7F4E9188753397 /* Theme.swift */; };
+		EBA0E75C3CEB44C4BEFA5CC6 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 1446EC5DA7434D7C44C3657B /* SnapshotTesting */; };
+		ED9F0F4C72B1198D35FD3316 /* OneshotAppUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73E80804EB42C82B834BA322 /* OneshotAppUITests.swift */; };
 		F91A10F00B0A4A0A0A0A0AB1 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91A10F00B0A4A0A0A0A0AA1 /* HistoryView.swift */; };
 		F91A10F00B0A4A0A0A0A0AB2 /* MealLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91A10F00B0A4A0A0A0A0AA2 /* MealLogging.swift */; };
 		F91A10F00B0A4A0A0A0A0AB6 /* GluInstallId.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91A10F00B0A4A0A0A0A0AA6 /* GluInstallId.swift */; };
@@ -46,6 +53,13 @@
 			remoteGlobalIDString = 1F0E0F0D0A0A4A0A0A0A0A0A;
 			remoteInfo = OneshotApp;
 		};
+		EEA641DC48C323FF27C0F863 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 2D0E0F0D0A0A4A0A0A0A0A0A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1F0E0F0D0A0A4A0A0A0A0A0A;
+			remoteInfo = OneshotApp;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -54,9 +68,14 @@
 		120CD3C862D744C98C240ABA /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		188ABD6E08034225AB1FEBE1 /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		1A0E0F0D0A0A4A0A0A0A0A0A /* Glu AI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Glu AI.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		27A9D186FD6B6ABDDAA05E7D /* OneshotAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneshotAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D54C0F2B96F6226A1E5D7E2 /* MealLogStoreTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = MealLogStoreTests.swift; sourceTree = "<group>"; };
 		3E18F8FB2B7F4E9188753397 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Theme.swift; sourceTree = "<group>"; };
 		41E0D3D63340B99E1CD93FB7 /* AppStateTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = AppStateTests.swift; sourceTree = "<group>"; };
+		4467E1AF90AF4B2E8B4E5000 /* Entitlement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Entitlement.swift; sourceTree = "<group>"; };
+		4467E1AF90AF4B2E8B4E5002 /* RCErrorMapping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCErrorMapping.swift; sourceTree = "<group>"; };
+		4467E1AF90AF4B2E8B4E5004 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		4467E1AF90AF4B2E8B4E5006 /* Configuration.storekit */ = {isa = PBXFileReference; lastKnownFileType = text; path = Configuration.storekit; sourceTree = "<group>"; };
 		4CAE207C863B4548AEA1EF2C /* PaywallView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PaywallView.swift; sourceTree = "<group>"; };
 		5034941421F54D79B41E300 /* GluAccess.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GluAccess.swift; sourceTree = "<group>"; };
 		5034941421F54D79B41E301 /* RevenueCatSubscriptionService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RevenueCatSubscriptionService.swift; sourceTree = "<group>"; };
@@ -65,7 +84,9 @@
 		592B4BDA0ECEE43CEF83B267 /* OneshotAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneshotAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = onboarding_steps.json; path = Resources/onboarding_steps.json; sourceTree = "<group>"; };
 		6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = Resources/Assets.xcassets; sourceTree = "<group>"; };
+		73E80804EB42C82B834BA322 /* OneshotAppUITests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = OneshotAppUITests.swift; sourceTree = "<group>"; };
 		7B9A0D3B70784468A9B9D3C5 /* OneshotAppApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneshotAppApp.swift; sourceTree = "<group>"; };
+		9BD73E43308871D50AC10C6F /* DashboardSnapshotTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = DashboardSnapshotTests.swift; sourceTree = "<group>"; };
 		A1B2C3D40A0A4A0A0A0A0E01 /* Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
 		A1B2C3D40A0A4A0A0A0A0E02 /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
 		B5AD54C036494DF6A16E56C5 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
@@ -98,6 +119,15 @@
 			buildActionMask = 2147483647;
 			files = (
 				8FABBFC78E059D62B9CCDBB4 /* Foundation.framework in Frameworks */,
+				EBA0E75C3CEB44C4BEFA5CC6 /* SnapshotTesting in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ABFB7619B6F51190690983DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B5306898DE93D18252BE32B9 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +142,7 @@
 				1E0E0F0D0A0A4A0A0A0A0A0A /* Products */,
 				D976E1EAF3BABE26AA94F68A /* Frameworks */,
 				45EFD54361E77D2CA92A601B /* OneshotAppTests */,
+				F2F7AC8D226A9ED3192AE039 /* OneshotAppUITests */,
 			);
 			sourceTree = "<group>";
 		};
@@ -121,6 +152,7 @@
 				579A15512FA3BC1F00A94E66 /* OneshotApp.entitlements */,
 				7B9A0D3B70784468A9B9D3C5 /* OneshotAppApp.swift */,
 				FD32A1E204A54420926A254D /* AppState.swift */,
+				4467E1AF90AF4B2E8B4E5000 /* Entitlement.swift */,
 				F91A10F00B0A4A0A0A0A0AA6 /* GluInstallId.swift */,
 				3E18F8FB2B7F4E9188753397 /* Theme.swift */,
 				E903C2F6677743F7B678BB81 /* AppRootView.swift */,
@@ -130,6 +162,7 @@
 				EC3CB4136C42411E9F0A1FF6 /* Services.swift */,
 				188ABD6E08034225AB1FEBE1 /* AuthView.swift */,
 				4CAE207C863B4548AEA1EF2C /* PaywallView.swift */,
+				4467E1AF90AF4B2E8B4E5002 /* RCErrorMapping.swift */,
 				10A81FB4DF754BA18654C556 /* MainTabView.swift */,
 				B5AD54C036494DF6A16E56C5 /* HomeView.swift */,
 				FE64CF01BE0D4ABEA105BEF4 /* CoreActionView.swift */,
@@ -142,6 +175,7 @@
 				6F9C2B1A4E7B43A3A0E7F0C0 /* onboarding_steps.json */,
 				F91A10F00B0A4A0A0A0A0AC4 /* AppSecrets.plist */,
 				6F9C2B1A4E7D43B3A0E7F0D0 /* Assets.xcassets */,
+				4467E1AF90AF4B2E8B4E5004 /* PrivacyInfo.xcprivacy */,
 			);
 			path = OneshotApp;
 			sourceTree = "<group>";
@@ -151,6 +185,7 @@
 			children = (
 				1A0E0F0D0A0A4A0A0A0A0A0A /* Glu AI.app */,
 				592B4BDA0ECEE43CEF83B267 /* OneshotAppTests.xctest */,
+				27A9D186FD6B6ABDDAA05E7D /* OneshotAppUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -160,8 +195,8 @@
 			children = (
 				41E0D3D63340B99E1CD93FB7 /* AppStateTests.swift */,
 				2D54C0F2B96F6226A1E5D7E2 /* MealLogStoreTests.swift */,
+				9BD73E43308871D50AC10C6F /* DashboardSnapshotTests.swift */,
 			);
-			name = OneshotAppTests;
 			path = OneshotAppTests;
 			sourceTree = "<group>";
 		};
@@ -170,6 +205,7 @@
 			children = (
 				A1B2C3D40A0A4A0A0A0A0E01 /* Debug.xcconfig */,
 				A1B2C3D40A0A4A0A0A0A0E02 /* Release.xcconfig */,
+				4467E1AF90AF4B2E8B4E5006 /* Configuration.storekit */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -180,6 +216,15 @@
 				FE5080A29F1DBCEDC85DCD68 /* iOS */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F2F7AC8D226A9ED3192AE039 /* OneshotAppUITests */ = {
+			isa = PBXGroup;
+			children = (
+				73E80804EB42C82B834BA322 /* OneshotAppUITests.swift */,
+			);
+			name = OneshotAppUITests;
+			path = OneshotAppUITests;
 			sourceTree = "<group>";
 		};
 		FE5080A29F1DBCEDC85DCD68 /* iOS */ = {
@@ -193,6 +238,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1E7DE70B1A9E92DA8A82617C /* OneshotAppUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3C93C6D785E893553B138E53 /* Build configuration list for PBXNativeTarget "OneshotAppUITests" */;
+			buildPhases = (
+				A24EEC4DED68DA94E1F5E950 /* Sources */,
+				ABFB7619B6F51190690983DD /* Frameworks */,
+				FB108A38C2B82F1ECC4DC105 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				F69BEA092EDE7ACEFD48D742 /* PBXTargetDependency */,
+			);
+			name = OneshotAppUITests;
+			productName = OneshotAppUITests;
+			productReference = 27A9D186FD6B6ABDDAA05E7D /* OneshotAppUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		1F0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2A0E0F0D0A0A4A0A0A0A0A0A /* Build configuration list for PBXNativeTarget "OneshotApp" */;
@@ -260,6 +323,7 @@
 			packageReferences = (
 				5034941421F54D79B41E312 /* XCRemoteSwiftPackageReference "supabase-swift" */,
 				5034941421F54D79B41E313 /* XCRemoteSwiftPackageReference "purchases-ios-spm" */,
+				59DEB718575A81664E287959 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */,
 			);
 			productRefGroup = 1E0E0F0D0A0A4A0A0A0A0A0A /* Products */;
 			projectDirPath = "";
@@ -267,6 +331,7 @@
 			targets = (
 				1F0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp */,
 				33E453305F0EED193F03C518 /* OneshotAppTests */,
+				1E7DE70B1A9E92DA8A82617C /* OneshotAppUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -279,10 +344,18 @@
 				5AC8F8A39D754C4081D49ED0 /* Assets.xcassets in Resources */,
 				6F9C2B1A4E7C43A3A0E7F0C1 /* onboarding_steps.json in Resources */,
 				F91A10F00B0A4A0A0A0A0AC5 /* AppSecrets.plist in Resources */,
+				4467E1AF90AF4B2E8B4E5005 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6A64882C65C37761A372ABD7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FB108A38C2B82F1ECC4DC105 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -298,6 +371,7 @@
 			files = (
 				70E7DE4DC8BC40618C106E90 /* OneshotAppApp.swift in Sources */,
 				5851792D6E184843B6F4F290 /* AppState.swift in Sources */,
+				4467E1AF90AF4B2E8B4E5001 /* Entitlement.swift in Sources */,
 				F91A10F00B0A4A0A0A0A0AB6 /* GluInstallId.swift in Sources */,
 				E605CE40514F4BDFA36AAC15 /* Theme.swift in Sources */,
 				1034941421F54D79B41E2D0A /* AppRootView.swift in Sources */,
@@ -307,6 +381,7 @@
 				199F9F8D61C74A19A65DBE1D /* Services.swift in Sources */,
 				16CAB11A5EB34A0ABE2BEC3F /* AuthView.swift in Sources */,
 				29B111E52C0347CDB058941E /* PaywallView.swift in Sources */,
+				4467E1AF90AF4B2E8B4E5003 /* RCErrorMapping.swift in Sources */,
 				798E3C36C57E46F3AC6FEB53 /* MainTabView.swift in Sources */,
 				8A4824A80CE24F3896FFAA15 /* HomeView.swift in Sources */,
 				9C479623027E4855A2E74ADB /* CoreActionView.swift in Sources */,
@@ -325,6 +400,15 @@
 			files = (
 				E4BC017B5695C1237C700354 /* AppStateTests.swift in Sources */,
 				8218DACC03714A55378B941E /* MealLogStoreTests.swift in Sources */,
+				5292EAF03FFD49A08CD13209 /* DashboardSnapshotTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A24EEC4DED68DA94E1F5E950 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED9F0F4C72B1198D35FD3316 /* OneshotAppUITests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -336,6 +420,12 @@
 			name = OneshotApp;
 			target = 1F0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp */;
 			targetProxy = C7243290D87DFC9E053A4DE5 /* PBXContainerItemProxy */;
+		};
+		F69BEA092EDE7ACEFD48D742 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = OneshotApp;
+			target = 1F0E0F0D0A0A4A0A0A0A0A0A /* OneshotApp */;
+			targetProxy = EEA641DC48C323FF27C0F863 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -442,12 +532,14 @@
 			baseConfigurationReference = A1B2C3D40A0A4A0A0A0A0E01 /* Debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = OneshotApp/OneshotApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Glu AI";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Glu AI uses the camera to capture meal photos for educational estimates.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Glu AI analyzes meal photos you choose to estimate nutrition information.";
@@ -476,12 +568,14 @@
 			baseConfigurationReference = A1B2C3D40A0A4A0A0A0A0E02 /* Release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_ENTITLEMENTS = OneshotApp/OneshotApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Glu AI";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Glu AI uses the camera to capture meal photos for educational estimates.";
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Glu AI analyzes meal photos you choose to estimate nutrition information.";
@@ -504,15 +598,29 @@
 			};
 			name = Release;
 		};
+		3A5CC27CF00B30B1A167D356 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ycxlabs.OneshotAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = OneshotApp;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		573B42665C2AAB745EEE0623 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ycxlabs.gluai.OneshotAppTests;
 				PRODUCT_NAME = OneshotAppTests;
-				GENERATE_INFOPLIST_FILE = YES;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Glu AI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Glu AI";
@@ -526,13 +634,26 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ENABLE_OBJC_WEAK = NO;
+				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.ycxlabs.gluai.OneshotAppTests;
 				PRODUCT_NAME = OneshotAppTests;
-				GENERATE_INFOPLIST_FILE = YES;
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 5.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Glu AI.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Glu AI";
+				TEST_TARGET_NAME = OneshotApp;
+			};
+			name = Debug;
+		};
+		B27D64E593D53F640569FBE0 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.ycxlabs.OneshotAppUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_TARGET_NAME = OneshotApp;
 			};
 			name = Debug;
@@ -567,6 +688,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
+		3C93C6D785E893553B138E53 /* Build configuration list for PBXNativeTarget "OneshotAppUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A5CC27CF00B30B1A167D356 /* Release */,
+				B27D64E593D53F640569FBE0 /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -586,9 +716,22 @@
 				minimumVersion = 5.0.0;
 			};
 		};
+		59DEB718575A81664E287959 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.17.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1446EC5DA7434D7C44C3657B /* SnapshotTesting */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 59DEB718575A81664E287959 /* XCRemoteSwiftPackageReference "swift-snapshot-testing" */;
+			productName = SnapshotTesting;
+		};
 		5034941421F54D79B41E310 /* Supabase */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 5034941421F54D79B41E312 /* XCRemoteSwiftPackageReference "supabase-swift" */;

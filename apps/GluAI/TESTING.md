@@ -10,7 +10,20 @@ cd supabase/functions/analyze-meal && deno test edge_contract_test.ts
 
 ## iOS
 
-Open `OneshotApp.xcodeproj` in Xcode and run the **OneshotApp** scheme on a simulator. There is no XCTest target in this template yet; add one to host unit tests for `MealAnalyzeResult` decoding, `GluInstallId`, and onboarding JSON loading.
+The iOS app uses a dual-pronged QA strategy designed to be driven by AI agents:
+
+1. **Snapshot Tests (`OneshotAppTests`)**: We use `swift-snapshot-testing` to catch visual regressions without needing manual device checks.
+2. **UI Tests (`OneshotAppUITests`)**: We use XCUITest to verify E2E flows (e.g., logging a meal, navigating the dashboard) using the Accessibility tree.
+
+### Running Agent QA
+
+To run the automated QA suite (which executes tests, generates reports, and extracts screenshots for AI inspection), use the provided script from the repository root:
+
+```bash
+./apps/GluAI/bin/ios-qa.sh
+```
+
+**Note:** For the best experience, ensure `xcbeautify` and `xcparse` are installed via Homebrew to format the output and extract UI test screenshots.
 
 ## SQL / RLS
 

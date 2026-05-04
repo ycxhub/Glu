@@ -7,6 +7,7 @@ struct HomeView: View {
     @Bindable var meals: MealLogStore
     var userId: String?
     var displayName: String?
+    var now: Date = .now
 
     @State private var selectedMeal: MealEntry?
 
@@ -213,7 +214,7 @@ struct HomeView: View {
     }
 
     private func greeting() -> String {
-        let h = Calendar.current.component(.hour, from: Date())
+        let h = Calendar.current.component(.hour, from: now)
         let sal = (h < 12) ? "Good morning" : ((h < 17) ? "Good afternoon" : "Good evening")
         if let n = displayName?.split(separator: " ").first {
             return "\(sal), \(n)"

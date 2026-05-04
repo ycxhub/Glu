@@ -82,7 +82,15 @@ enum APIConfig {
            !k.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             return k.trimmingCharacters(in: .whitespacesAndNewlines)
         }
-        return "Glu Gold"
+        return Entitlement.gluGold
+    }
+
+    static var freeTierQuota: Int {
+        let secretValue = appSecrets["FREE_TIER_QUOTA"]?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let infoValue = Bundle.main.object(forInfoDictionaryKey: "FREE_TIER_QUOTA") as? String
+        let raw = secretValue?.isEmpty == false ? secretValue : infoValue?.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let raw, let value = Int(raw), value > 0 else { return 5 }
+        return value
     }
 
     /// Shared anon-key client for auth + PostgREST. Nil when URL/key missing (mock / offline).
@@ -377,13 +385,15 @@ final class AuthController {
 protocol SubscriptionControlling: AnyObject {
     var isPremium: Bool { get }
     var isInTrialPeriod: Bool { get }
-    func restorePurchases() async throws
+    var isResolved: Bool { get }
+    func restorePurchases() async throws -> RestoreOutcome
     func preparePaywall() async
     func purchaseSelectedPlan(annualPreferred: Bool) async throws
 }
 
 extension SubscriptionControlling {
     var isInTrialPeriod: Bool { false }
+    var isResolved: Bool { true }
 }
 
 // MARK: - Meal analysis gateway

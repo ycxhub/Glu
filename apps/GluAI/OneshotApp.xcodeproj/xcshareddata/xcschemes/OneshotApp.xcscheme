@@ -41,7 +41,20 @@
                ReferencedContainer = "container:OneshotApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1E7DE70B1A9E92DA8A82617C"
+               BuildableName = "OneshotAppUITests.xctest"
+               BlueprintName = "OneshotAppUITests"
+               ReferencedContainer = "container:OneshotApp.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
+      <StoreKitConfigurationFileReference
+         identifier = "container:Config/Configuration.storekit">
+      </StoreKitConfigurationFileReference>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -65,6 +78,9 @@
             ReferencedContainer = "container:OneshotApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
+      <StoreKitConfigurationFileReference
+         identifier = "container:Config/Configuration.storekit">
+      </StoreKitConfigurationFileReference>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
